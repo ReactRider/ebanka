@@ -1,0 +1,139 @@
+.oneUser-container{
+    border: 1px solid #9A616D;
+    border-radius: 15px;
+    margin: 2em;
+    padding: 1em 2em;
+    height: auto;
+    width: 45vw;
+    display: grid;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    background-color: white;
+    z-index: 1000;
+}
+
+.oneBank-container{
+    border: 1px solid #9A616D;
+    border-radius: 15px;
+    margin: 2em;
+    padding-bottom: 1em;
+    padding-top: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
+    height: 45vh;
+    width: 45vw;
+    display: grid;
+    position: fixed;
+    top: 20%;
+    left: 0%;
+    background-color: white;
+    z-index: 1000;
+}
+
+.closed-btn{
+    background-color: #9A616D;
+    color: white;
+    border: 1px solid black;
+    border-radius: 15px;
+    width: 30%;
+    font-size: 20px;
+}
+
+.details-btn{
+    background-color: #9A616D;
+    color: white;
+    border: 1px solid black;
+    border-radius: 15px;
+    width: 32em;
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+
+.naslov{
+    border-bottom: 2px solid #357ABD;
+    color: #9A616D;
+}
+
+.second-user-container{
+    display: flex;
+    flex-direction: row;
+   gap: 3em;
+   justify-content: center;
+}
+
+.span1{
+    font-size: 24px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #357ABD;
+    cursor:pointer;
+    font-weight: 600;
+}
+
+.span2{
+    font-size: 24px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #357ABD;
+    cursor:pointer;
+}
+
+.paragraf{
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.drugi-kontainer-dugmadi{
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1500px){
+    .second-user-container{
+        justify-content: start;
+        gap: 2em;
+    }
+
+    .drugi-kontainer-dugmadi{
+        width: 90%;
+    }
+
+    .oneUser-container {
+        width: 60vw;
+    }
+}
+
+@media screen and (max-width: 1110px) {
+    .oneUser-container {
+        width: 65vw;
+    }
+
+    .span1, .span2 {
+        font-size: 20px;
+    }
+
+    .second-user-container button, .drugi-kontainer-dugmadi button {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .oneUser-container {
+        width: 75vw;
+    }
+
+     .span1, .span2 {
+        font-size: 16px;
+    }
+
+    .second-user-container button, .drugi-kontainer-dugmadi button {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 600px){
+    .oneUser-container, .oneBank-container{
+        display: none;
+    }
+}

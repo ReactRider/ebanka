@@ -1,0 +1,90 @@
+
+.label-transaction{
+    color: #007bff; 
+    display: block; 
+    margin-bottom: 2px; 
+    font-size: 18px; 
+    font-weight: 600; 
+}
+
+.input-transaction{
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 12px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    background-color: #f8f9fa; 
+    font-size: 18px; 
+    color: black; 
+    transition: border-color 0.3s ease;
+}
+
+.input-transaction-error{
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 12px; 
+    border: 2px solid red;
+    border-radius: 5px; 
+    background-color: #f8f9fa; 
+    font-size: 18px; 
+    color: black; 
+}
+
+.input-transaction:hover{
+    border-color: #007bff; 
+    outline: none;
+}
+
+.form-body{
+    display: flex;
+    justify-content: center;
+    background: #edc2d5;
+    background: linear-gradient(189deg, rgba(237, 194, 213, 1) 0%, rgba(133, 186, 242, 1) 100%);
+  
+    /*background: #E7E9BB;
+    background: linear-gradient(135deg, #E7E9BB, #A2E3D9);*/
+}
+
+.main{
+    width: 65vw;
+    margin-top: 5em;
+    margin-bottom: 5em;
+    background-color: white;
+}
+
+
+.each-container{
+   margin: .5em;
+}
+
+.sub-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(1);
+    gap: 20px;
+}
+
+.btn-transaction{
+    border: 1px solid  #007bff;
+    font-size: 20px;
+    font-weight: 400;
+    border-radius: .5em;
+    background-color: #007bff ;
+    color: #ccc;
+    width: 50%;
+    height : 100%;
+    margin: 1em;
+}
+
+.izvrsi-placanje-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 8%;
+}
+
+.btn-transaction:hover{
+    background-color: white;
+    color: black;
+}

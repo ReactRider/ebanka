@@ -1,0 +1,39 @@
+.message-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #373B44;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #4286f4, #373B44);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #4286f4, #373B44); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
+    gap : 4em;
+    position : fixed;
+    top : 25%;
+    left : 26%;
+    width: 50%;
+    height : 40%;
+    border-radius: 1.5em;
+    text-align: center;
+    color : #fff;
+}
+
+.empty-export-span {
+    color : #000;
+}
+
+.close-message-box {
+    width: 7em;
+    height : 2.5em;
+    border : none;
+    outline: none;
+    border-radius: 1em;
+    background-color: transparent;
+    font-size: 1.2em;
+    background-color: #fff;
+}
+
+.close-message-box:hover {
+    background-color: #000;
+    color: #fff;
+}

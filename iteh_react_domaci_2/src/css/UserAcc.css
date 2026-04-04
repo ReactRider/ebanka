@@ -1,0 +1,62 @@
+.combo-container {
+  position: absolute;
+  top: 14em;
+  left: 8em;
+}
+
+.custom-combo {
+  width: 25vw;
+  padding: 8px 12px;
+  background-color: white; 
+  border: 2px solid #3C5E96;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+
+.cela-strana{
+    height: 92vh;
+    background: #edc2d5;
+    background: linear-gradient(189deg, rgba(237, 194, 213, 1) 0%, rgba(133, 186, 242, 1) 100%);
+   
+}
+
+  .centriranje-grafikona {
+  position: fixed;
+  top: 55%;
+  left: 65%;
+  width: 60vw;
+  height: 70vh;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  overflow: auto;
+  margin-top: 2em;
+}
+
+
+
+
+.pozicija-izbora{
+      position: absolute;
+  top: 25em;
+  left: 8em;
+}
+
+.tekst-izbora-2{
+    font-weight: 600;
+    font-size: 22px;
+    color: #9A616D;
+    margin-bottom: 10px;
+}
+
+.chart-button-2{
+    border-radius: 10px;
+    border: 2px solid white;
+    background-color: #9A616D;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 10px;
+}

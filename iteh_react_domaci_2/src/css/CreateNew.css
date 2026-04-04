@@ -1,0 +1,238 @@
+body {
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.main-container-create-new-user {
+    display: flex;
+    flex-wrap: wrap;
+    width: 75vw;
+    height: 82vh;
+    background-color: #99ddff;
+    margin: 1.5em auto;
+    border-radius: 1em;
+    border : 1px solid #000;
+    box-shadow: 5px 5px 3px gray;
+}
+
+.main-container-create-new-bank{
+    display: flex;
+    flex-wrap: wrap;
+    width: 65vw;
+    height: 75vh;
+    background-color: #99ddff;
+    margin: 1.5em auto;
+    border-radius: 1em;
+    border : 1px solid #000;
+    box-shadow: 5px 5px 3px gray;
+}
+
+.title-container-create-new-user {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 10%;
+    border-bottom: 1px solid #000;
+}
+
+.columns-container-create-new-user {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 75%;
+    gap: 2.5em;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: start;
+    padding: 1em;
+}
+
+.first-column-container-create-new-user {
+    flex : 1;
+    background-color: #f2f2f2;
+    border-radius: 1em;
+    border : 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    gap : 1em;
+    justify-content: center;
+    align-items: center;
+    padding: 1.2em;
+}
+
+.second-column-container-create-new-user {
+    flex: 1;
+    background-color: #f2f2f2;
+    border-radius: 1em;
+    border : 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    gap : 1em;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+}
+
+.single-input-container-create-new-user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    width: 100%;
+}
+
+.single-input-container-create-new-bank {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    width: 100%;
+}
+
+.single-input-container-create-new-user > label {
+    margin-bottom: .4em;
+}
+
+.input-create-new-user {
+    border-radius: 1em;
+    border : 1px solid #000;
+    outline: none;
+    text-align: center;
+    font-size: 1.2em;
+    width: 50%;
+}
+
+.input-create-new-bank {
+    border-radius: 1em;
+    border : 1px solid #000;
+    outline: none;
+    text-align: center;
+    font-size: 1.2em;
+    width: 50%;
+    height: 3em;
+}
+
+.country-select-create-new-user {
+    font-size: 1.2em;
+    width: 60%;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+
+.city-select-create-new-bank {
+    font-size: 1.2em;
+    width: 60%;
+    height: 2em;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.buttons-main-container-create-new-user {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;    
+    gap: 2em;
+}
+
+.button-container-first-create-new-user {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.button-container-second-create-new-user {
+    width: 40%;
+    height : 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.create-new-user-button {
+    border-radius: 1.1em;
+    width: 40%;
+    height: 90%;
+    border: none;
+    outline: none;
+    font-size: 1.2em;
+    background-color: #ffaf1a;
+    transition: all .5s;
+}
+
+.create-new-user-button:hover {
+    border: 1px solid #fff;
+    color : #fff;
+}
+
+
+@media screen and (max-width: 1500px) {
+    .main-container-create-new-user {
+        height : 95vh;
+    }
+}
+
+@media screen and (max-width: 1250px) {
+    .input-create-new-user {
+        width: 70%;
+    }
+
+    .create-new-user-button {
+        width: 50%;
+    }
+}
+
+@media  screen and (max-width: 1000px) {
+    .main-container-create-new-user {
+        height : 180vh;
+    }
+    .columns-container-create-new-user {
+        flex-direction: column;
+    }
+    
+    .second-column-container-create-new-user {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .first-column-container-create-new-user {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .buttons-main-container-create-new-user button{
+        height: 60%;
+    }
+
+    .input-create-new-bank{
+        font-size: 1em;
+        width: 60%;
+    }
+
+    .create-new-user-button{
+        width: 60%;
+    }
+
+}
+
+@media screen and (max-width: 800px){
+    .create-new-user-button{
+        width: 80%;
+    }
+
+    .input-create-new-bank{
+        width: 70%;
+    }
+}
+

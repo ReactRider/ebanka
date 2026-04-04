@@ -1,0 +1,295 @@
+.users-search-main-container {
+  width: 80vw;
+  height: 11vh;
+  border-radius: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 1em auto;
+  margin-bottom: 2em;
+  gap: 2em;
+  background-color: lightblue;
+  box-shadow: 5px 5px 5px lightgray;
+}
+
+.users-search-title-container {
+  flex : .9;
+  display: flex;
+  justify-content: end;
+  align-items: center;  
+}
+
+.users-search-input-box-container {
+  flex: 1.1;
+  display: flex;
+  justify-content: start;
+  width: 100%;
+  height:50%;
+}
+
+.users-search-input-box-container > input[type="text"] {
+  width: 55%;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.2em;
+  letter-spacing: .06em;
+  outline: none;
+}
+
+.tabela-kontejner-user {
+    overflow-x: auto;
+    width: 80vw;
+    border: 2px solid black;
+    border-radius: 20px;
+    margin: 2em auto;
+    display: flex;
+    background-color: white !important;
+   }
+
+   .tabela-kontejner-user-admin {
+    overflow-x: auto;
+    width: 96vw;
+    border: 2px solid black;
+    border-radius: 20px;
+    margin: 2em auto;
+    display: flex;
+    background-color: white !important;
+   }
+
+   .tabela-kontejner-banka{
+    overflow-x: auto;
+    width: 80vw;
+    border: 2px solid black;
+    border-radius: 20px;
+    margin: 3em auto;
+    display: flex;
+    background-color: white !important;
+   }
+  
+  .user-tabela {
+    width: 100%; 
+    border-collapse: collapse;  
+    justify-content: center;
+    align-items: center;
+  }
+
+  .red {
+    border: 1px solid #ccc; 
+    padding: .5em;
+    text-align: center;
+    font-weight: 450;
+  }
+
+  .red-bank {
+    border: 1px solid #ccc; 
+    padding: .5em;
+    text-align: center;
+    font-size: 1.25em;
+    font-weight: 450;
+  }
+
+  .red-sub-admin{
+    border: 1px solid #ccc; 
+    padding: .5em;
+    text-align: center;
+    font-weight: 550;
+  }
+
+  .kolona{
+    border: 1px solid black; 
+    padding: 8px;
+    text-align: center;
+    background-color: lightgray;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .red:hover{
+    background-color: lightgray;
+  }
+  
+  .red-sub-admin:hover{
+    background-color: lightgray;
+  }
+  .zakljucan-background{
+    overflow-y: hidden;
+  }
+  
+  .user-bank-accounts-title-container {
+    width: 80vw;
+    margin: 1em auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 2em;
+    background-color: lightblue;
+    color: black;
+    border-radius: 1em;
+    padding: 1em;
+    box-shadow: .5em .5em 5px lightgray;
+  }
+
+  .user-bank-accounts-filter-container {
+    width: 80vw;
+    margin: 2em auto;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3em;
+  }
+
+  .user-bank-accounts-banks-dropdown-filter {
+    outline: none;
+    cursor : pointer;
+    font-size: 1.3em;
+    text-align: center;
+  }
+
+  .user-bank-accounts-radio-button-to-delete {
+    width: 2em;
+    appearance: none;     -webkit-appearance: none;
+    -moz-appearance: none;
+  
+    width: 16px;
+    height: 16px;
+    border: 2px solid #333;
+    border-radius: 0; 
+    background-color: white;
+    cursor: pointer;
+  }
+
+  .user-bank-accounts-radio-button-to-delete:checked{
+    background-color: #9A616D;
+  }
+
+  .user-account-action-buttons-container {
+    width: 80vw;
+    margin: 3em auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4em;
+  }
+
+  .delete-user-bank-account-button {
+    border-radius: 2em;
+    transition: all .35s;
+    cursor: pointer;
+    outline: none;
+    font-size: 1.4em;
+    padding: .5em;
+    width: 40%;
+    height: 2.5em;
+    background-color: #ffaf1a;
+    border: none;
+  }
+  .create-user-bank-account-button {
+    transition: all .35s;
+    border-radius: 2em;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 1.4em;
+    padding: .5em;
+    width: 40%;
+    height: 2.5em;
+    background-color: #ffaf1a;
+
+  }
+
+  .delete-user-bank-account-button:hover, .create-user-bank-account-button:hover {
+    box-shadow: .5em .5em .4em gray;
+  }
+
+  .option-new-acc{
+    transition: all .35s;
+    border-radius: 2em;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 1.4em;
+    width: 140%;
+    margin-bottom: 10px;
+    background-color: #ffaf1a;
+  }
+
+  .filter-details-title{
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-right: 1em;
+  }
+
+
+  
+
+  
+@media screen and (max-width: 1050px) {
+  
+  .users-search-main-container {
+    flex-direction: column;
+    height: 15vh;
+    gap: 0;
+  }
+
+  .users-search-title-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .users-search-input-box-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .users-search-input-box-container > input[type="text"] {
+    font-size: .9em;
+    height: 70%;
+  }
+
+  .red {
+    font-size: .9em;
+  }
+
+  .kolona {
+    font-size: 1em;
+  }
+
+  .red-bank {
+    font-size: 1em;
+  }
+
+  .delete-user-bank-account-button, .create-user-bank-account-button{
+    width: 70%;
+    font-size: 1.2em;
+  }
+
+.filter-details-title{
+  font-size: 1em;
+}
+
+.user-bank-accounts-banks-dropdown-filter{
+  font-size: 1em;
+}
+
+}
+
+
+@media screen and (max-width: 600px){
+  .delete-user-bank-account-button, .create-user-bank-account-button{
+    width: 90%;
+    font-size: 1em;
+  }
+
+  .user-bank-accounts-banks-dropdown-filter{
+  font-size: .8em;
+  }
+  .user-bank-accounts-filter-container{
+    justify-content: center;
+  }
+
+}

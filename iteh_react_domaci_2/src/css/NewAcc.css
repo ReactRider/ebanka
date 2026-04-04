@@ -1,0 +1,282 @@
+
+.telo-container-forma{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;  
+    height : 93vh;
+    background: #edc2d5;
+    background: linear-gradient(189deg, rgba(237, 194, 213, 1) 0%, rgba(133, 186, 242, 1) 100%);
+}
+
+.forma-racun{
+    border: 2px solid black;
+    border-radius: 15px;
+    width: 55vw;
+    height: 96%;
+    background-color: white !important ;
+    margin: 1em;
+}
+
+.user{
+    border: 1px dashed black;
+     margin:10px;
+     padding: 1em;
+}
+
+.tekst{
+    font-weight: 600;
+    font-size: 22px;
+    color: #2124c4;
+    margin: 10px;
+}
+
+.polja-korisnik{
+    background-color: rgb(208, 232, 240);
+    color: black;
+    border: 1px solid black;
+    width: 20vw;
+    height: 2em;
+    text-align: center;
+    margin-left: 3px;
+    font-size: 18px;
+}
+
+.polja-korisnik-a{
+    background-color: rgb(208, 232, 240);
+    color: black;
+    border: 1px solid black;
+    width: 35vw;
+    height: 2em;
+    text-align: center;
+    margin-left: 3px;
+    font-size: 18px;
+}
+
+.container-korisnik-first{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5em;
+}
+
+.container-korisnik-first-first-group, .container-korisnik-first-second-group{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+}
+
+.container-korisnik-first-first-group > input {
+    width: 75%;
+}
+
+.container-korisnik-first-first-group > label {
+    width: 25%;
+    margin-right: 0;
+}
+
+.container-korisnik-first-second-group > input {
+    width: 75%;
+}
+
+.container-korisnik-first-second-group > label {
+    width: 25%;
+        margin-right: 0;
+
+}
+
+.container-korisnik-second{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-top: 1em;
+}
+
+
+.detalji-one-row {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+
+
+}
+
+.container-korisnik-second > input {
+    width: 50%;
+    margin-left: 1.5em;
+}
+
+.polje-kamata{
+    width: 3vw;
+    background-color: rgb(208, 232, 240);
+    color: black;
+    border: 1px solid black;
+    text-align: center;
+    margin-left: 30px;
+    margin-right: 5px;
+    font-size: 18px;
+}
+
+.detalji-container{
+    margin-left: 20px;
+}
+
+.polje-detalji{
+    border: 1px solid black;
+    color: black;
+    background-color: rgb(208, 232, 240);
+    margin-left: 30px;
+    width: 25vw;
+    height: 2em;
+    font-size: 18px;
+    text-align: center;
+}
+
+.polje-detalji-stednja{
+    border: 1px solid black;
+    color: black;
+    background-color: rgb(208, 232, 240);
+    margin-left: 10px;
+    width: 30vw;
+    height: 2em;
+    text-align: center;
+    font-size: 18px;
+}
+
+.btn-potvrda{
+    background-color: #ffaf1a;
+    color: black;
+    width: 10em;
+    height: 3em;
+    border-radius: 15px;
+    margin-top:10px;
+    font-size: 22px;
+}
+
+.btn-potvrda-devizni{
+    background-color: #ffaf1a;
+    color: black;
+    width: 10em;
+    height: 3em;
+    border-radius: 15px;
+    margin-top:10px;
+    font-size: 18px;
+}
+
+.btn-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.radio-button-container{
+    display: flex;
+    flex-direction: column;
+    gap : .5em;
+}
+
+.radio-container-first-group, .radio-container-second-group {
+    display: flex;
+    flex-direction: row;
+    width: 100%;    
+}
+
+.radio-one-container input {
+    width: 60%;
+}
+
+.radio-one-container label {
+    width: 40%;
+}
+
+.radio-container-first-group{
+    display: flex;
+    flex-direction: row;
+}
+
+.radio-container-second-group{
+    display: flex;
+    flex-direction: row;
+}
+
+.radio-one-container {
+    display: flex;
+    flex: 1;
+}
+
+@media screen and (max-width: 1600px) {
+    .telo-container-forma {
+        height: 130vh;
+    }
+    .container-korisnik-first-first-group, .container-korisnik-first-second-group{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container-korisnik-second {
+        flex-direction: column;
+        justify-content: center;    
+    }
+
+}
+
+@media screen and (max-width: 1300px) {
+    .radio-container-first-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .radio-container-second-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .radio-button-container {
+        flex-direction: row;
+    }
+
+
+
+
+}
+
+@media screen and (max-width: 1100px) {
+    .detalji-one-row {
+        flex-direction: column;
+    }
+
+    .detalji-one-row > input {
+        width: 70%;
+    }
+
+    .telo-container-forma {
+        height: 155vh;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .radio-button-container {
+        flex-direction: column;
+    }
+
+}
+
+@media screen and (max-width: 550px) {
+    .telo-container-forma {
+        height: 190vh;
+    }
+
+    .container-korisnik-first-first-group {
+        width: 100%;
+    }
+
+    .container-korisnik-first-second-group {
+        width: 100%;
+    }
+}

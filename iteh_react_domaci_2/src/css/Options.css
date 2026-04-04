@@ -1,0 +1,94 @@
+.container-option{
+    width: 55%;
+    height: 35%;
+    background-color: white;
+    border: 3px solid #2124c4;
+    border-radius: 15px;
+    align-items: center;
+    display: grid;
+    position: fixed;    
+    top : 30%;
+    left : 25%;
+}
+
+
+
+.two-containers{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px
+}
+
+
+.buttons-second{
+    background-color: #ffaf1a;
+    height: 10vh;
+    width: 90%;
+    border-radius: 20px;
+    margin-left: 20px;
+    font-size: 24px;
+    border: 2px solid #2124c4;
+    color: black;
+    font-weight: 500;
+}
+
+.buttons-second:hover{
+    box-shadow: .5em .5em .4em gray;
+}
+
+
+.title-izbor{
+    margin-left: 30px;
+    font-size: 28px;
+    color: #2124c4;
+    font-weight: 600;
+    margin-bottom: -10px;
+}
+
+@media screen and (max-width: 1000px){
+    .two-containers{
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+    }
+
+    .two-containers div {
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container-option{
+        height: 50%;
+        width: 50%;
+        
+    }
+
+    .title-izbor{
+        font-size: 22px;
+    }
+
+    .buttons-second{
+        width: 60%;
+        height: 8vh;
+        font-size: 22px;
+    }
+}
+
+@media screen and (max-width: 700px){
+    .title-izbor{
+        font-size: 18px;
+    }
+
+    .buttons-second{
+        width: 55%;
+        height: 5vh;
+        font-size: 16px;
+    }
+
+    .container-option{
+        height: 40%;
+        width: 50%;
+        
+    }
+}

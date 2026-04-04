@@ -1,0 +1,342 @@
+.user-data {
+    border-radius: 10px; 
+    margin-top : .5em;
+    padding: 20px; 
+    text-align: center;
+    background-color: #E6F1FB; 
+    color: #1C3A61; 
+    font-family: serif;
+    font-size: 1.2em;
+    font-weight: 750;
+  }
+
+  
+  .user-data:hover {
+    border-color: #357ABD; 
+    background-color: #D0E4F9; 
+  }
+  
+  .container-info {
+    width: 70%; 
+    margin: 2% auto; 
+     
+    padding: 20px; 
+    border: 2px solid #4A90E2; 
+    border-radius: 10px; 
+    background-color: #F9FBFE;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    text-align: center;
+  }
+
+    .container-info-2 {
+    width: 70%; 
+    margin: 2% auto; 
+     
+    padding: 20px; 
+    border: 2px solid #4A90E2; 
+    border-radius: 10px; 
+    background-color: #F9FBFE;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1);
+      text-align: center;
+  } 
+
+  .account-info-body {
+    overflow-y : hidden;
+    background: #edc2d5;
+    background: linear-gradient(189deg, rgba(237, 194, 213, 1) 0%, rgba(133, 186, 242, 1) 100%);
+    height : 92vh;
+  }
+
+  .container-image-edit{
+    width: 75%; 
+    margin: 2% auto; 
+    padding: 20px; 
+    border-radius: 10px; 
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: repeat(1);
+    gap: 20px;
+  }
+
+  .container-edit {
+    margin: 0 auto; 
+    padding: 20px; 
+    border-radius: 10px; 
+    justify-self: end;
+
+  }
+
+  @media screen and (max-width: 1400px) {
+    .container-info {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+
+    .container-info-2 {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }    
+
+    .account-info-body {
+      height: 120vh;
+    }
+
+    .container-image-edit {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(1, 1fr);
+    }
+
+    .container-edit {
+      width: 80%;
+    }
+
+    .container-edit button {
+      width: 80%;
+    }
+  }
+
+  .navbar {
+    background-color: #fff !important;
+  }
+
+
+  .container-image {
+   /* display: flex;
+    align-items: center;
+    justify-content: flex-end;*/
+    justify-self: end; /* Poravnanje drugog diva desno */
+
+
+  }
+
+  .profile-image{
+    border-radius: 50%;
+    width: 8em;
+    height: 8em;
+    border: 1px solid #4A90E2;
+    margin-right: 2em;
+    background-image: url("../slike/placeholder.jpg");
+    background-size: 100% 100%;
+  }
+
+
+  .file-upload {
+    padding: 10px 20px;
+    font-size: 16px;
+    opacity: 0.4;
+    color: black;
+    border-radius: 5px;
+    cursor: pointer;    
+  }
+
+  .file-upload:hover{
+    opacity: 1;
+  }
+
+
+  .btn-edit {
+    width: 10vw;
+    padding: 1.2em;
+    border-radius: 10px;
+    border: 1px solid #4A90E2;
+    opacity: 0.8;
+    background: transparent;
+
+  }
+
+  .btn-edit:hover{
+    background-color: lightblue;
+    opacity: 1;
+    transition: all .6s;
+    box-shadow : 2px 2px 10px#fff;
+    border : 1px solid white;
+    animation: shake 0.5s ease-in-out; 
+    background-color: #fff;
+    
+  }
+
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5px); 
+    }
+    50% {
+      transform: translateX(5px);
+    }
+    75% {
+      transform: translateX(-5px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+
+  .btn-save {
+    width: 10vw;
+    padding: 1.2em;
+    border-radius: 10px;
+    border: 1px solid #4A90E2;
+    opacity: 0.8;
+    background-color: white;
+    border: 2px solid #1C3A61;
+
+  }
+
+  .user-data-animation{
+    border-radius: 10px; 
+    margin-top : .5em;
+    padding: 20px; 
+    text-align: center;
+    background-color: #E6F1FB; 
+    color: #1C3A61; 
+     font-family: serif;
+    font-size: 1.2em;
+    font-weight: 750;
+    animation : change-data 2s infinite ease-in-out;
+  }
+
+  @keyframes change-data {
+    0% {background-color: #E6F1FB;}
+    
+    50% {background-color: #a5bfd6;}
+
+    100% {background-color: #98b7d3;}
+}
+
+
+.container-info-admin{
+  width: 60%; 
+    margin: 2% auto; 
+    margin-top: 8em;
+    padding: 20px; 
+    border: 2px solid #4A90E2; 
+    border-radius: 10px; 
+    background-color: #F9FBFE;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px
+}
+
+.container-info-admin-2{
+    width: 60%; 
+    margin: 2% auto; 
+     
+    padding: 20px; 
+    border: 2px solid #4A90E2; 
+    border-radius: 10px; 
+    background-color: #F9FBFE;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(1);
+    gap: 30px;
+
+}
+
+.container-info-admin-3{
+  width: 60%; 
+    margin: 2% auto; 
+    padding: 20px; 
+    border: 2px solid #4A90E2; 
+    border-radius: 10px; 
+    background-color: #F9FBFE;
+
+}
+
+.user-data-admin {
+  border-radius: 10px; 
+  margin-top : .5em;
+  padding: 20px; 
+  text-align: center;
+  background-color: #E6F1FB; 
+  color: #1C3A61; 
+  font-family: serif;
+  font-size: 1.2em;
+  font-weight: 750;
+}
+
+.user-data-admin-2 {
+  border-radius: 10px; 
+  margin-top : .5em;
+  padding: 20px;
+  padding-left: 7em;
+  padding-right: 7em; 
+  text-align: center;
+  background-color: #E6F1FB; 
+  color: #1C3A61; 
+  font-family: serif;
+  font-size: 1.2em;
+  font-weight: 750;
+}
+
+.container-info-admin div p, .container-info-admin-2 div p{
+  margin-right: 1em;
+}
+  
+
+@media screen and (max-width: 1300px) {
+  .container-info-admin {
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    width: 50%;
+  }
+
+  .container-info-admin div, .container-info-admin-2 div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container-info-admin-2 {
+    grid-template-columns: repeat(1,1fr);
+    grid-template-rows: repeat(2,1fr);
+    width: 50%;
+  }
+
+  
+}
+
+@media screen and (max-width: 1000px) {
+
+  .container-info-admin, .container-info-admin-2 {
+    text-align: center;
+    justify-content: center;
+  }
+
+  .container-info-admin div, .container-info-admin-2 div{
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+  
+
+
+  @media screen and (max-width: 900px) {
+      .container-info {
+      grid-template-columns: repeat(1, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      width: 60%;
+    }
+
+    .container-info-2 {
+      grid-template-columns: repeat(1, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      width: 60%;
+    }    
+
+    .account-info-body {
+      height : 200%;
+    }
+  }
