@@ -1,0 +1,136 @@
+.zt-page {
+    min-height: 100vh;
+    background: linear-gradient(189deg, rgba(237, 194, 213, 1) 0%, rgba(133, 186, 242, 1) 100%);
+    display: flex;
+    justify-content: center;
+    padding: 3em 1em;
+}
+
+.zt-card {
+    background: #fff;
+    border-radius: 1em;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.12);
+    padding: 2em 2.5em;
+    width: 100%;
+    max-width: 1100px;
+    height: fit-content;
+}
+
+.zt-title {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #9A616D;
+    margin-bottom: 0.2em;
+}
+
+.zt-subtitle {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 1.8em;
+}
+
+.zt-divider {
+    border: none;
+    border-top: 2px solid #f0dde2;
+    margin-bottom: 1.8em;
+}
+
+.zt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1em;
+}
+
+.zt-table thead tr {
+    background-color: #9A616D;
+    color: #fff;
+}
+
+.zt-table thead th {
+    padding: 13px 16px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.zt-table thead th:last-child {
+    text-align: center;
+}
+
+.zt-table tbody tr {
+    border-bottom: 1px solid #f0dde2;
+    transition: background-color 0.15s ease;
+}
+
+.zt-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.zt-table tbody tr:hover {
+    background-color: #fdf4f6;
+}
+
+.zt-table tbody td {
+    padding: 13px 16px;
+    color: #333;
+    vertical-align: middle;
+}
+
+.zt-table tbody td:last-child {
+    text-align: center;
+}
+
+.zt-amount {
+    font-weight: 700;
+    color: #2471b3;
+    white-space: nowrap;
+}
+
+.zt-badge {
+    display: inline-block;
+    background-color: #f0dde2;
+    color: #9A616D;
+    font-weight: 600;
+    font-size: 0.88em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.zt-date {
+    font-weight: 500;
+    color: #444;
+}
+
+.zt-btn-cancel {
+    background-color: #fff;
+    color: #c0392b;
+    border: 1.5px solid #c0392b;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+}
+
+.zt-btn-cancel:hover {
+    background-color: #c0392b;
+    color: #fff;
+}
+
+.zt-empty {
+    text-align: center;
+    padding: 3em 0;
+    color: #aaa;
+    font-size: 1.05em;
+}
+
+.zt-no-acc {
+    text-align: center;
+    padding: 3em 1em;
+    color: #9A616D;
+    font-size: 1.1em;
+    font-weight: 500;
+}

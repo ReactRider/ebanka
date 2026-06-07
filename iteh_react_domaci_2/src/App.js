@@ -24,6 +24,8 @@ import NewNavBar from './components/NewNavBar';
 import SubAdminHomeRacun from './components/SubAdminHomeRacun';
 import SubAdminHomeKorisnici from './components/SubAdminHome';
 import UsersAccPageForAdmin from './components/UsersAccPageForAdmin';
+// DODATO: stranica za zakazane transakcije
+import ZakazaneTransakcije from './components/ZakazaneTransakcije';
 
 function App() {
 
@@ -60,6 +62,8 @@ function App() {
             <Route path="user/menjacnica/buy" element={<MenjKupovinaProdaja action={"buy"}/>} />
             <Route path="user/menjacnica/sell" element={<MenjKupovinaProdaja action={"sell"}/>} />
             <Route path="user/charts" element={<Charts focusedAcc={focusedAcc}/>}/>
+            {/* DODATO: ruta za zakazane transakcije */}
+            <Route path="user/zakazane-transakcije" element={<ZakazaneTransakcije focusedAcc={focusedAcc}/>}/>
           </Route>
 
           <Route path="/" element={<NewNavBar login={2}/>}>

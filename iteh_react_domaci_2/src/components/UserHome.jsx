@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Racuni from './Racuni';
 import axios from 'axios';
 import "../css/HomePageData.css";
+import ChatBot from './ChatBot';
 import { PiVaultBold } from "react-icons/pi";
 import TransactionDetails from './TransactionDetails';
 import PopUp from './PopUp';
@@ -286,7 +287,7 @@ const UserHome = ({accountFocus, focusedAcc}) => {
         }
     }
 
-    setMonths(monthsList.reverse());
+    setMonths(monthsList);
 
       let user = window.sessionStorage.getItem("user_auth_token");
       let admin = window.sessionStorage.getItem("admin_auth_token");
@@ -352,6 +353,7 @@ const UserHome = ({accountFocus, focusedAcc}) => {
   return (
       <>
         <Racuni onAccountFocus={handleAccountFocus} />
+        <ChatBot />
 
         {showDetails && <TransactionDetails details={selectedTransaction} closeDetails={closeDetails}/>}
 
@@ -369,7 +371,7 @@ const UserHome = ({accountFocus, focusedAcc}) => {
               color="#9A616D"     
               size={35}           
               margin={8}          
-              speedMultiplier={0.5} 
+              speedMultiplier={0.4} 
             />
             </div>
             </> : <>

@@ -75,10 +75,17 @@ const Racuni = ({onAccountFocus}) => {
         <h1>Nema računa za prikaz.</h1>
       </>)}
 
-      {!zeroAccountsHook && ( <><div className={`carousel-item-active two-col-container-layout ${isHovered ? "arrow_hovered_active" : "arrow_unhovered"}`}>{carouselItems[currentIndex]}</div>
-      <div className="arrow" onMouseEnter={() => {setIsHovered(true)}} onMouseLeave={() => {setIsHovered(false)}} onClick={handleNext}>&#8594;</div>
-      <div className={`carousel-item-next two-col-container-layout ${isHovered ? "arrow_hovered_next" : "arrow_unhovered"}`} onClick={handleNext}>{carouselItems[(currentIndex+1)%racuni.length ]}</div>
-      </>)}
+      {!zeroAccountsHook && racuni.length === 1 && (
+        <div className="carousel-item-active two-col-container-layout">{carouselItems[0]}</div>
+      )}
+
+      {!zeroAccountsHook && racuni.length > 1 && (
+        <>
+          <div className={`carousel-item-active two-col-container-layout ${isHovered ? "arrow_hovered_active" : "arrow_unhovered"}`}>{carouselItems[currentIndex]}</div>
+          <div className="arrow" onMouseEnter={() => {setIsHovered(true)}} onMouseLeave={() => {setIsHovered(false)}} onClick={handleNext}>&#8594;</div>
+          <div className={`carousel-item-next two-col-container-layout ${isHovered ? "arrow_hovered_next" : "arrow_unhovered"}`} onClick={handleNext}>{carouselItems[(currentIndex+1)%racuni.length]}</div>
+        </>
+      )}
       
     </div>
     

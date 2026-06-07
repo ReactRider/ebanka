@@ -100,8 +100,9 @@ const NewNavBar = ({login}) => {
                         Plaćanja <IoCash style={{width:'1.5em', height:'1.5em'}} />
                       </label>
                       <ul className="dropdown-menu">
-                        <li><Link className="dropdown-item" to="user/new-transaction/interna-transakcija">Interno placanje</Link></li>
+                        <li><Link className="dropdown-item" to="user/new-transaction/interna-transakcija">Interno plaćanje</Link></li>
                         <li><Link className="dropdown-item" to="user/new-transaction/eksterna-transakcija">Eksterno plaćanje</Link></li>
+                        <li><Link className="dropdown-item" to="user/zakazane-transakcije">Zakazana plaćanja</Link></li>
                       </ul>
                     </div>
                   </Link>

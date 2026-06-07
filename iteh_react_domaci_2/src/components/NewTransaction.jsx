@@ -55,6 +55,11 @@ const NewTransaction = ({focusedAcc, tip}) => {
     const messageText='Transakcija uspesno izvrsena!';
     const failedTransactionMessage='Interne transakcije nije moguce izvrsiti';
     const navigate=useNavigate();
+
+    // DODATO: stanje za zakazanu (recurring) transakciju
+    const [isScheduled, setIsScheduled] = useState(false);
+    const [danUMesecu, setDanUMesecu] = useState('');
+    const [scheduledSuccess, setScheduledSuccess] = useState(false);
     
   useEffect(() => {
     const trenutniDatum = new Date();
@@ -125,7 +130,7 @@ const NewTransaction = ({focusedAcc, tip}) => {
         let type;
 
          
-            if(focusedAcc.detalji.stanje_racuna < transactionData.iznos) {
+            if(!isScheduled && focusedAcc.detalji.stanje_racuna < transactionData.iznos) {
               setInsufficientFunds(true);
               return;
             }
@@ -134,9 +139,9 @@ const NewTransaction = ({focusedAcc, tip}) => {
               setInvalidAmount(true);
               return;
             }
-             
 
-        if(tip ==='interna'){
+
+        if(!isScheduled && tip ==='interna'){
             newInternalData.forEach((d, index)=>{
                 if(d.detalji.broj_racuna===transactionData.broj_racuna_primaoca){
                     id=d.detalji.id;
@@ -263,12 +268,35 @@ const NewTransaction = ({focusedAcc, tip}) => {
         data.append('vreme', time );
         data.append('racun_id', focusedAcc.id);
 
+        // DODATO: ako je zakazana transakcija, dodaj polja i preskoči odbitak stanja
+        if (isScheduled) {
+            if (!danUMesecu || danUMesecu < 1 || danUMesecu > 28) {
+                alert('Unesite validan dan u mesecu (1–28) za zakazanu transakciju.');
+                return;
+            }
+            data.append('is_scheduled', 'true');
+            data.append('dan_u_mesecu', danUMesecu);
+
+            let configZakazana = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'http://127.0.0.1:8000/api/korisnik/nova-transakcija',
+                headers: { 'Authorization': 'Bearer ' + window.sessionStorage.getItem('user_auth_token') },
+                data: data
+            };
+
+            axios.request(configZakazana)
+                .then(() => setScheduledSuccess(true))
+                .catch((error) => console.log(error));
+
+            return; // preskoči odbitak stanja — izvrsava se tek kad komanda proradi
+        }
 
         let config = {
         method: 'post',
         maxBodyLength: Infinity,
         url: 'http://127.0.0.1:8000/api/korisnik/nova-transakcija',
-        headers: { 
+        headers: {
             'Authorization': 'Bearer '+window.sessionStorage.getItem('user_auth_token'),
         },
         data : data
@@ -368,6 +396,11 @@ const NewTransaction = ({focusedAcc, tip}) => {
         setSuccessfulTran(false);
         navigate('/user/home');
       }
+      // DODATO: zatvaranje poruke uspesnog zakazivanja
+      if(scheduledSuccess) {
+        setScheduledSuccess(false);
+        navigate('/user/zakazane-transakcije');
+      }
       if(insufficientFunds) {
         setInsufficientFunds(false);
         return;
@@ -462,12 +495,44 @@ const NewTransaction = ({focusedAcc, tip}) => {
             </div>
         </div>
         
-        <div className='izvrsi-placanje-container'>
-            <button type="submit" className="btn-transaction" onClick={(ex)=>{handleNewTransaction(ex)}}>Izvrši plaćanje</button>
+        {/* DODATO: sekcija za zakazivanje transakcije */}
+        <div className="each-container" style={{marginTop: '8px'}}>
+            <label className="label-transaction" style={{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer'}}>
+                <input
+                    type="checkbox"
+                    checked={isScheduled}
+                    onChange={e => setIsScheduled(e.target.checked)}
+                    style={{width:'18px', height:'18px', cursor:'pointer'}}
+                />
+                Zakazati transakciju (ponavljajuća)
+            </label>
         </div>
-        
+
+        {isScheduled && (
+            <div className="each-container">
+                <label className="label-transaction">Dan u mesecu (1–28):</label>
+                <input
+                    type="number"
+                    min="1"
+                    max="28"
+                    placeholder="npr. 4"
+                    value={danUMesecu}
+                    onChange={e => setDanUMesecu(e.target.value)}
+                    className="input-transaction"
+                />
+            </div>
+        )}
+
+        <div className='izvrsi-placanje-container'>
+            <button type="submit" className="btn-transaction" onClick={(ex)=>{handleNewTransaction(ex)}}>
+                {isScheduled ? 'Izvrši Transakciju' : 'Izvrši plaćanje'}
+            </button>
+        </div>
+
         </form>
         {successfulTran && <PopUp closeMessageBox={closeMessageBox} messageText={messageText}/>}
+        {/* DODATO: poruka uspesnog zakazivanja */}
+        {scheduledSuccess && <PopUp closeMessageBox={closeMessageBox} messageText={'Zakazana transakcija je kreirana!'} />}
         {failedTransaction && <PopUp closeMessageBox={(closeMessageBox)} messageText={failedTransactionMessage}/>}
         {insufficientFunds && <PopUp closeMessageBox={closeMessageBox} messageText={"Nemate dovoljno sredstava na računu!"} />}
         {invalidAmount && <PopUp closeMessageBox={closeMessageBox} messageText={"Iznos mora biti pozitivan broj!"} /> }
