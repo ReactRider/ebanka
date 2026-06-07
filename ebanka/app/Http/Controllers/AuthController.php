@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\SendOtpNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -13,24 +15,54 @@ class AuthController extends Controller
 {
     public function login(Request $request) {
         $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string|min:8'
+            'email'    => 'required|string',
+            'password' => 'required|string|min:8',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            // Ako su kredencijali tačni, dobijamo korisnika
-            $korisnik = Auth::user();
-            
-            // Generišemo API token za korisnika
-            $token = $korisnik->createToken('ebanka')->plainTextToken;
-
-            // Vraćamo token kao odgovor
-            return response()->json([
-                'token' => $token,
-            ]);
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json('greska pri log in-u', 401);
         }
 
-        return response()->json('greska pri log in-u', 401);
+        $korisnik = Auth::user();
+
+        $otp =strval(random_int(100001, 999999));
+
+        $korisnik->otp_code       = $otp;
+        $korisnik->otp_expires_at = Carbon::now()->addMinutes(10);
+        $korisnik->save();
+
+        Auth::logout();
+
+        $korisnik->notify(new SendOtpNotification($otp));
+
+        return response()->json(['requires_2fa' => true], 200);
+    }
+
+    public function verifyTwoFactor(Request $request) {
+        $request->validate([
+            'email' => 'required|string|email',
+            'code'  => 'required|string|size:6',
+        ]);
+
+        $korisnik = User::where('email', $request->email)->first();
+
+        if (!$korisnik) {
+            return response()->json('Korisnik nije pronađen.', 404);
+        }
+
+        if (
+            $korisnik->otp_code !== $request->code ||
+            is_null($korisnik->otp_expires_at)        ) {
+            return response()->json('Nevažeći ili istekao kod.', 401);
+        }
+
+        $korisnik->otp_code       = null;
+        $korisnik->otp_expires_at = null;
+        $korisnik->save();
+
+        $token = $korisnik->createToken('ebanka')->plainTextToken;
+
+        return response()->json(['token' => $token]);
     }
 
     public function logout(Request $request) {
@@ -70,45 +102,87 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('ebanka')->plainTextToken;
-        
+
         return response()->json(['data'=>$user,'access_token'=>$token,'token_type'=>'Bearer']);
     }
 
     public function logInSysAdmin(Request $request) {
         $request->validate([
-            'email'=> 'required|email',
-            'password'=> 'required|string|min:8'
+            'email'    => 'required|email',
+            'password' => 'required|string|min:8',
         ]);
 
-        $admin = Admin::where('email', $request['email'])->firstOrFail();
+        $admin = Admin::where('email', $request->email)->first();
 
-        if($admin && Hash::check($request->password, $admin->password)) {
-
-            $token = $admin->createToken('Admin Access Token')->plainTextToken;
-
-            return response()->json(['message' => 'Hi ' . $admin->name . ', welcome to admin home', 'access_token' => $token, 'token_type' => 'Bearer']);
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
+            return response()->json('greska pri log in-u admina', 401);
         }
 
-        return response()->json("greska pri log in-u admina");
+        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $admin->otp_code       = $otp;
+        $admin->otp_expires_at = Carbon::now()->addMinutes(10);
+        $admin->save();
+
+        $admin->notify(new SendOtpNotification($otp));
+
+        return response()->json(['requires_2fa' => true], 200);
     }
 
     public function logInSubAdmin(Request $request) {
         $request->validate([
-            'email'=> 'required|email',
-            'password'=> 'required|string|min:8',
-            'banka_id'=> 'required|integer'
+            'email'    => 'required|email',
+            'password' => 'required|string|min:8',
+            'banka_id' => 'required|integer',
         ]);
 
-        $admin = Admin::where('email', $request['email'])->firstOrFail();
+        $admin = Admin::where('email', $request->email)->first();
 
-        if($admin && Hash::check($request->password, $admin->password)) {
-
-            $token = $admin->createToken('Admin Access Token')->plainTextToken;
-
-            return response()->json(['message' => 'Hi ' . $admin->name . ', welcome to admin home', 'access_token' => $token, 'token_type' => 'Bearer']);
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
+            return response()->json('greska pri log in-u admina', 401);
         }
 
-        return response()->json("greska pri log in-u admina");
+        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $admin->otp_code       = $otp;
+        $admin->otp_expires_at = Carbon::now()->addMinutes(10);
+        $admin->save();
+
+        $admin->notify(new SendOtpNotification($otp));
+
+        return response()->json(['requires_2fa' => true], 200);
+    }
+
+    public function verifyAdminTwoFactor(Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'code'  => 'required|string|size:6',
+        ]);
+
+        $admin = Admin::where('email', $request->email)->first();
+
+        if (!$admin) {
+            return response()->json('Admin nije pronađen.', 404);
+        }
+
+        if (
+            $admin->otp_code !== $request->code ||
+            is_null($admin->otp_expires_at) ||
+            Carbon::now()->isAfter($admin->otp_expires_at)
+        ) {
+            return response()->json('Nevažeći ili istekao kod.', 401);
+        }
+
+        $admin->otp_code       = null;
+        $admin->otp_expires_at = null;
+        $admin->save();
+
+        $token = $admin->createToken('Admin Access Token')->plainTextToken;
+
+        return response()->json([
+            'message'      => 'Hi ' . $admin->ime . ', welcome to admin home',
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+        ]);
     }
 }
-

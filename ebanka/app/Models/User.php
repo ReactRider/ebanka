@@ -28,7 +28,9 @@ class User extends Authenticatable
         'password',
         'broj_licne_karte',
         'broj_telefona',
-        'drzava'
+        'drzava',
+        'otp_code',
+        'otp_expires_at',
     ];
 
     /**
@@ -48,6 +50,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'otp_expires_at'    => 'datetime',
     ];
 
     public function racun(){

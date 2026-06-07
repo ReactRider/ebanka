@@ -15,6 +15,7 @@ use App\Http\Controllers\DevizniRacunController;
 use App\Http\Controllers\TransactionsExportController;
 use App\Http\Controllers\GraphicDisplayController;
 use App\Http\Controllers\ProfilePhoto;
+use App\Http\Controllers\ChatController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -77,6 +78,12 @@ Route::middleware(['auth:sanctum', 'isRegularUser'])->group( function() {
     Route::post("/korisnik/total-amonut/year", [GraphicDisplayController::class, 'getDataYear']);
     Route::post("/korisnik/total-amonut/quarter", [GraphicDisplayController::class, 'getDataQuarter']);
 
+
+    //Chat bot
+
+    // DODATO: rute za zakazane (recurring) transakcije
+    Route::get('/korisnik/zakazane-transakcije/{racun_id}', [TransakcijaController::class, 'zakazane_transakcije']);
+    Route::patch('/korisnik/zakazana-transakcija/{id}/deaktiviraj', [TransakcijaController::class, 'deaktiviraj']);
 
 });
 
@@ -141,9 +148,17 @@ Route::middleware("guest")->group( function() {
     Route::post('/admin/login-sub-admin', [AuthController::class, "logInSubAdmin"]);
 
     // sign up ruta
-    Route::post("/registracija",[AuthController::class,"register"]);    
+    Route::post("/registracija",[AuthController::class,"register"]);
+
+    // 2FA verifikacija
+    Route::post('/korisnik/verify-2fa', [AuthController::class, 'verifyTwoFactor']);
+    Route::post('/admin/verify-2fa-system-admin', [AuthController::class, 'verifyAdminTwoFactor']);
+    Route::post('/admin/verify-2fa-sub-admin', [AuthController::class, 'verifyAdminTwoFactor']);
     
     //ruta za ucitavanje kursnih lista
     Route::get("/kursna-lista", [ExchangeRatesController::class, "fetchRates"]);
     Route::get("/sve-banke",[BankController::class,"index"]);
 });
+
+
+Route::post('/chat', [ChatController::class, 'respond']);

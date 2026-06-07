@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Admin extends Model
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory, HasApiTokens, Notifiable;
 
     protected $fillable = [
         'ime',
@@ -17,7 +18,9 @@ class Admin extends Model
         'datum_rođenja',
         'grad',
         'email',
-        'password'
+        'password',
+        'otp_code',
+        'otp_expires_at',
     ];
 
     protected $hidden = [
@@ -26,7 +29,7 @@ class Admin extends Model
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
     ];
 
     public function banka() {

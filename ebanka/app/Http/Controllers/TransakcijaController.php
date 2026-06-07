@@ -12,6 +12,7 @@ use App\Models\TekuciRacun;
 
 use App\Http\Resources\TransakcijaCollection;
 use App\Http\Resources\TransakcijaResource;
+use Carbon\Carbon; // DODATO: za racunanje sledece_izvrsavanje kod zakazanih transakcija
 
 class TransakcijaController extends Controller
 {
@@ -43,31 +44,65 @@ class TransakcijaController extends Controller
      */
     public function store(Request $request)
     {
-        $validate=$request->validate([
-            'iznos'=>'required',
-            'datum'=>'required',
-            'vreme'=>'required',
-            'opis_transakcije'=>'required',
-            'broj_racuna_primaoca'=>'required',
-            'racun_id'=>'required',
-            'sifra_placanja'=>'required',
-            'naziv_primaoca'=>'required'
-            
+        // DODATO: provera da li je transakcija zakazana (recurring templat)
+        $isScheduled = $request->boolean('is_scheduled');
+
+        $validate = $request->validate([
+            'iznos'                => 'required',
+            'datum'                => 'required',
+            'vreme'                => 'required',
+            'opis_transakcije'     => 'required',
+            'broj_racuna_primaoca' => 'required',
+            'racun_id'             => 'required',
+            'sifra_placanja'       => 'required',
+            'naziv_primaoca'       => 'required',
+            // DODATO: dan_u_mesecu je obavezan samo za zakazane transakcije
+            'dan_u_mesecu'         => 'required_if:is_scheduled,true|nullable|integer|min:1|max:28',
         ]);
 
-        $transakcija=Transakcija::create([
-            'iznos'=>$validate['iznos'],
-            'datum'=>$validate['datum'],
-            'vreme'=>$validate['vreme'],
-            'opis_transakcije'=>$validate['opis_transakcije'],
-            'broj_racuna_primaoca'=>$validate['broj_racuna_primaoca'],
-            'sifra_placanja'=>$validate['sifra_placanja'],
-            'naziv_primaoca'=>$validate['naziv_primaoca'],
-            'racun_id'=>$validate['racun_id'],
-            'id'=>rand(100000000000000, 999999999999999)
+        if ($isScheduled) {
+            // DODATO: racunanje prvog datuma izvrsavanja na osnovu dana u mesecu
+            $dan   = (int) $validate['dan_u_mesecu'];
+            $today = Carbon::today();
+            $sledece = Carbon::createFromDate($today->year, $today->month, $dan);
+            if ($sledece->lte($today)) {
+                $sledece->addMonth();
+            }
+
+            $transakcija = Transakcija::create([
+                'iznos'                => $validate['iznos'],
+                'datum'                => $validate['datum'],
+                'vreme'                => $validate['vreme'],
+                'opis_transakcije'     => $validate['opis_transakcije'],
+                'broj_racuna_primaoca' => $validate['broj_racuna_primaoca'],
+                'sifra_placanja'       => $validate['sifra_placanja'],
+                'naziv_primaoca'       => $validate['naziv_primaoca'],
+                'racun_id'             => $validate['racun_id'],
+                'id'                   => rand(100000000000000, 999999999999999),
+                // DODATO: polja zakazane transakcije
+                'is_scheduled'         => true,
+                'dan_u_mesecu'         => $dan,
+                'sledece_izvrsavanje'  => $sledece->toDateString(),
+                'is_active'            => true,
+            ]);
+
+            return response()->json(new TransakcijaResource($transakcija), 201);
+        }
+
+        // Postojeca logika za obicne transakcije (nepromenjena)
+        $transakcija = Transakcija::create([
+            'iznos'                => $validate['iznos'],
+            'datum'                => $validate['datum'],
+            'vreme'                => $validate['vreme'],
+            'opis_transakcije'     => $validate['opis_transakcije'],
+            'broj_racuna_primaoca' => $validate['broj_racuna_primaoca'],
+            'sifra_placanja'       => $validate['sifra_placanja'],
+            'naziv_primaoca'       => $validate['naziv_primaoca'],
+            'racun_id'             => $validate['racun_id'],
+            'id'                   => rand(100000000000000, 999999999999999),
         ]);
 
-        return response()->json(new TransakcijaResource($transakcija),201);
+        return response()->json(new TransakcijaResource($transakcija), 201);
     }
 
     /**
@@ -146,8 +181,23 @@ class TransakcijaController extends Controller
 }
 
     public function prikaz_transakcija($racun_id){
-        $racun=Racun::findOrFail($racun_id);
-        $t=$racun->transakcija;
+        $racun = Racun::findOrFail($racun_id);
+        // DODATO: iskljucujemo templejte zakazanih transakcija iz istorije
+        $t = $racun->transakcija()->obicne()->get();
         return new TransakcijaCollection($t);
+    }
+
+    // DODATO: vraca sve aktivne zakazane transakcije za dati racun
+    public function zakazane_transakcije($racun_id){
+        $racun = Racun::findOrFail($racun_id);
+        $t = $racun->transakcija()->zakazane()->get();
+        return response()->json(['zakazane_transakcije' => $t]);
+    }
+
+    // DODATO: deaktivira zakazanu transakciju (korisnik je otkazuje)
+    public function deaktiviraj($id){
+        $transakcija = Transakcija::findOrFail($id);
+        $transakcija->update(['is_active' => false]);
+        return response()->json(['message' => 'Zakazana transakcija je otkazana.']);
     }
 }
