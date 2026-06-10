@@ -65,7 +65,7 @@ class TransakcijaController extends Controller
             $dan   = (int) $validate['dan_u_mesecu'];
             $today = Carbon::today();
             $sledece = Carbon::createFromDate($today->year, $today->month, $dan);
-            if ($sledece->lte($today)) {
+            if ($sledece->lt($today)) {
                 $sledece->addMonth();
             }
 

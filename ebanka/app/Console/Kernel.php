@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // DODATO: svaki dan u ponoc izvrsava zakazane transakcije
-        $schedule->command('transakcije:izvrsi-zakazane')->daily();
+        $schedule->command('transakcije:izvrsi-zakazane')->everyMinute();
     }
 
     /**
