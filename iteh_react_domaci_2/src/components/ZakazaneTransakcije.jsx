@@ -7,6 +7,7 @@ const ZakazaneTransakcije = ({ focusedAcc }) => {
     const [zakazane, setZakazane] = useState([]);
     const [loading, setLoading] = useState(true);
     const [noAcc, setNoAcc] = useState(false);
+    const [confirmId, setConfirmId] = useState(null);
 
     useEffect(() => {
         if (!focusedAcc) {
@@ -35,7 +36,12 @@ const ZakazaneTransakcije = ({ focusedAcc }) => {
     }, [focusedAcc]);
 
     const handleOtkazivanje = (id) => {
-        if (!window.confirm('Da li ste sigurni da želite da otkažete ovu zakazanu transakciju?')) return;
+        setConfirmId(id);
+    };
+
+    const handleConfirm = () => {
+        const id = confirmId;
+        setConfirmId(null);
 
         const config = {
             method: 'patch',
@@ -72,6 +78,18 @@ const ZakazaneTransakcije = ({ focusedAcc }) => {
 
     return (
         <div className="zt-page">
+        {confirmId !== null && (
+            <div className="zt-overlay">
+                <div className="zt-modal">
+                    <h3 className="zt-modal-title">Otkazivanje plaćanja</h3>
+                    <p className="zt-modal-text">Da li ste sigurni da želite da otkažete ovo zakazano plaćanje? Ova akcija se ne može poništiti.</p>
+                    <div className="zt-modal-actions">
+                        <button className="zt-modal-btn-cancel" onClick={() => setConfirmId(null)}>Odustani</button>
+                        <button className="zt-modal-btn-confirm" onClick={handleConfirm}>Da, otkaži</button>
+                    </div>
+                </div>
+            </div>
+        )}
             <div className="zt-card">
                 <h2 className="zt-title">Zakazana plaćanja</h2>
                 <p className="zt-subtitle">

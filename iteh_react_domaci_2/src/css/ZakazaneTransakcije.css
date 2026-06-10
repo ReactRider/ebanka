@@ -134,3 +134,76 @@
     font-size: 1.1em;
     font-weight: 500;
 }
+
+.zt-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.zt-modal {
+    background: #fff;
+    border-radius: 1em;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 2.2em 2.5em;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.zt-modal-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #9A616D;
+    margin-bottom: 0.6em;
+}
+
+.zt-modal-text {
+    font-size: 0.97em;
+    color: #555;
+    margin-bottom: 1.8em;
+    line-height: 1.5;
+}
+
+.zt-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
+
+.zt-modal-btn-cancel {
+    padding: 9px 24px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    background: #fff;
+    color: #555;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.zt-modal-btn-cancel:hover {
+    background-color: #f0f0f0;
+}
+
+.zt-modal-btn-confirm {
+    padding: 9px 24px;
+    border-radius: 6px;
+    border: 1.5px solid #c0392b;
+    background: #c0392b;
+    color: #fff;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.zt-modal-btn-confirm:hover {
+    background-color: #a93226;
+    border-color: #a93226;
+}
