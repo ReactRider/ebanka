@@ -102,6 +102,12 @@ class TransakcijaController extends Controller
             'id'                   => rand(100000000000000, 999999999999999),
         ]);
 
+        // Za eksterne transakcije ka internom racunu, kreditiraj primaoca
+        // (za interne transakcije frontend vec kreditira primaoca direktno)
+        if ($request->input('tip') !== 'interna') {
+            $this->kreditirajPrimaoca($validate['broj_racuna_primaoca'], (float) $validate['iznos']);
+        }
+
         return response()->json(new TransakcijaResource($transakcija), 201);
     }
 
@@ -199,5 +205,80 @@ class TransakcijaController extends Controller
         $transakcija = Transakcija::findOrFail($id);
         $transakcija->update(['is_active' => false]);
         return response()->json(['message' => 'Zakazana transakcija je otkazana.']);
+    }
+
+    private function kreditirajPrimaoca(string $brojRacuna, float $iznos): void
+    {
+        $modeli = [
+            TekuciRacun::class,
+            StudentskiRacun::class,
+            StedniRacun::class,
+            DevizniRacun::class,
+        ];
+
+        foreach ($modeli as $model) {
+            $podracun = $model::where('broj_racuna', $brojRacuna)->first();
+            if ($podracun) {
+                $podracun->stanje_racuna += $iznos;
+                $podracun->save();
+                return;
+            }
+        }
+    }
+
+    // DODATO: vraca sve izvrsene zakazane transakcije za danasnji dan za racune ulogovanog korisnika
+    public function noveIzvrseneZakazane(Request $request)
+    {
+        $user  = $request->user();
+        $today = Carbon::today()->toDateString();
+
+        $racunIds = Racun::where('user_id', $user->id)->pluck('id');
+
+        if ($racunIds->isEmpty()) {
+            return response()->json(['transakcije' => []]);
+        }
+
+        $transakcije = Transakcija::whereIn('racun_id', $racunIds)
+            ->where('was_scheduled', true)
+            ->where('datum', $today)
+            ->get(['id', 'iznos', 'naziv_primaoca', 'broj_racuna_primaoca', 'vreme']);
+
+        return response()->json(['transakcije' => $transakcije]);
+    }
+
+    // DODATO: vraca dolazne transakcije za sve racune ulogovanog korisnika nastale nakon datog trenutka
+    public function dolazneTransakcije(Request $request)
+    {
+        $user = $request->user();
+        $od   = $request->query('od');
+
+        $racuni = Racun::where('user_id', $user->id)->get();
+        $brojeviRacuna = [];
+
+        foreach ($racuni as $racun) {
+            $podracun = match($racun->type) {
+                'tekuci'     => TekuciRacun::find($racun->id_podtipa),
+                'studentski' => StudentskiRacun::find($racun->id_podtipa),
+                'stedni'     => StedniRacun::find($racun->id_podtipa),
+                'devizni'    => DevizniRacun::find($racun->id_podtipa),
+                default      => null,
+            };
+            if ($podracun) {
+                $brojeviRacuna[] = $podracun->broj_racuna;
+            }
+        }
+
+        if (empty($brojeviRacuna)) {
+            return response()->json(['transakcije' => []]);
+        }
+
+        $transakcije = Transakcija::whereIn('broj_racuna_primaoca', $brojeviRacuna)
+            ->where(function ($q) {
+                $q->where('is_scheduled', false)->orWhereNull('is_scheduled');
+            })
+            ->whereRaw("CONCAT(datum, ' ', vreme) > ?", [$od])
+            ->get(['iznos', 'broj_racuna_primaoca', 'datum', 'vreme']);
+
+        return response()->json(['transakcije' => $transakcije]);
     }
 }

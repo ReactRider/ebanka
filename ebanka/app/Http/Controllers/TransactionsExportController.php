@@ -96,12 +96,16 @@ class TransactionsExportController extends Controller
                         border: 1px solid black;
                     }
                     th, td {
-                        padding: 8px;
+                        padding: 4px;
                         text-align: left;
                     }
                     th {
                         background-color: #f2f2f2;
                     }
+
+                    .brrac {
+                        font-size: .85em;
+                    }   
                 </style>
             </head>
             <body>
@@ -121,8 +125,8 @@ class TransactionsExportController extends Controller
     
             foreach ($transactions as $transaction) {
                 $html .= '<tr>
-                            <td>' . $transaction->id . '</td>
-                            <td>' . $transaction->broj_racuna_primaoca . '</td>
+                            <td class="brrac">' . $transaction->id . '</td>
+                            <td class="brrac">' . $transaction->broj_racuna_primaoca . '</td>
                             <td>' . $transaction->datum . '</td>
                             <td>' . $transaction->iznos . ' RSD</td>
                             <td>' . $transaction->vreme . '</td>
@@ -134,7 +138,7 @@ class TransactionsExportController extends Controller
             
             $pdf = new TCPDF();
             $pdf->AddPage();
-            $pdf->SetFont('dejavusans', '', 12);
+            $pdf->SetFont('dejavusans', '', 10);
     
             $pdf->writeHTML($html, true, false, true, false, '');
     

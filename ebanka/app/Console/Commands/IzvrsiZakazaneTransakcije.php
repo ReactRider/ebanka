@@ -66,6 +66,7 @@ class IzvrsiZakazaneTransakcije extends Command
                 'datum'                => $today->toDateString(),
                 'vreme'                => Carbon::now()->format('H:i:s'),
                 'is_scheduled'         => false,
+                'was_scheduled'        => true,
             ]);
 
             // Odbija iznos sa racuna posiljoca

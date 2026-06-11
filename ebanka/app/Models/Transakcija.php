@@ -14,7 +14,7 @@ class Transakcija extends Model
     protected $fillable = [
         'broj_racuna_primaoca', 'iznos', 'opis_transakcije', 'datum', 'vreme',
         'id', 'racun_id', 'sifra_placanja', 'naziv_primaoca',
-        'is_scheduled', 'dan_u_mesecu', 'sledece_izvrsavanje', 'is_active',
+        'is_scheduled', 'dan_u_mesecu', 'sledece_izvrsavanje', 'is_active', 'was_scheduled',
     ];
 
     public function racun(){

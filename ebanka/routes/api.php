@@ -85,6 +85,10 @@ Route::middleware(['auth:sanctum', 'isRegularUser'])->group( function() {
     Route::get('/korisnik/zakazane-transakcije/{racun_id}', [TransakcijaController::class, 'zakazane_transakcije']);
     Route::patch('/korisnik/zakazana-transakcija/{id}/deaktiviraj', [TransakcijaController::class, 'deaktiviraj']);
 
+    // DODATO: rute za notifikacije
+    Route::get('/korisnik/dolazne-transakcije', [TransakcijaController::class, 'dolazneTransakcije']);
+    Route::get('/korisnik/nove-izvrsene-zakazane', [TransakcijaController::class, 'noveIzvrseneZakazane']);
+
 });
 
 // Adminska grupa ruta
