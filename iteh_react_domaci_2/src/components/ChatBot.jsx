@@ -15,7 +15,7 @@ const ChatBot = () => {
 
     useEffect(() => {
         const showTimer = setTimeout(() => setShowBubble(true), 2000);
-        const hideTimer = setTimeout(() => setShowBubble(false), 10000);
+        const hideTimer = setTimeout(() => setShowBubble(false), 7500);
         return () => {
             clearTimeout(showTimer);
             clearTimeout(hideTimer);

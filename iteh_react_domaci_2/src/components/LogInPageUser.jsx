@@ -166,6 +166,7 @@ const LoginPageUser = ({handleLogInStatus}) => {
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value)}
                         placeholder="000000"
+                        autoComplete="off"
                         style={{ letterSpacing: '0.4em', textAlign: 'center' }}
                       />
                       <label className="form-label" htmlFor="formOtp">

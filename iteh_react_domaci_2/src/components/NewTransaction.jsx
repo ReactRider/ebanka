@@ -62,10 +62,9 @@ const NewTransaction = ({focusedAcc, tip}) => {
     const [scheduledSuccess, setScheduledSuccess] = useState(false);
     
   useEffect(() => {
-    const trenutniDatum = new Date();
-    const formattedDate = trenutniDatum.toISOString().split('T')[0];
+    const d = new Date();
+    const formattedDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     setDatum(formattedDate);
-    
   }, []);
 
   const [transactionData, setTransactionData]=useState({
@@ -265,8 +264,9 @@ const NewTransaction = ({focusedAcc, tip}) => {
 
     
         data.append('datum', datum);
-        data.append('vreme', time );
+        data.append('vreme', time);
         data.append('racun_id', focusedAcc.id);
+        data.append('tip', tip);
 
         // DODATO: ako je zakazana transakcija, dodaj polja i preskoči odbitak stanja
         if (isScheduled) {
@@ -396,10 +396,13 @@ const NewTransaction = ({focusedAcc, tip}) => {
         setSuccessfulTran(false);
         navigate('/user/home');
       }
-      // DODATO: zatvaranje poruke uspesnog zakazivanja
       if(scheduledSuccess) {
         setScheduledSuccess(false);
         navigate('/user/zakazane-transakcije');
+      }
+      if(failedTransaction) {
+        setFailedTransaction(false);
+        navigate('/user/home');
       }
       if(insufficientFunds) {
         setInsufficientFunds(false);

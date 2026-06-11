@@ -1,0 +1,91 @@
+.nt-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
+.nt-toast {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    min-width: 340px;
+    max-width: 420px;
+    animation: nt-slide-in 0.3s ease;
+}
+
+@keyframes nt-slide-in {
+    from { transform: translateX(120%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+.nt-accent {
+    width: 5px;
+    background: #27ae60;
+    flex-shrink: 0;
+}
+
+.nt-accent--zakazana {
+    background: #2471b3;
+}
+
+.nt-title--zakazana {
+    color: #2471b3;
+}
+
+.nt-body {
+    flex: 1;
+    padding: 16px 18px;
+}
+
+.nt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.nt-title {
+    font-weight: 700;
+    font-size: 1.05em;
+    color: #27ae60;
+}
+
+.nt-time {
+    font-size: 0.9em;
+    color: #999;
+}
+
+.nt-amount {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.nt-account {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.nt-close {
+    background: none;
+    border: none;
+    font-size: 1.6em;
+    color: #bbb;
+    cursor: pointer;
+    padding: 0 12px;
+    align-self: flex-start;
+    margin-top: 8px;
+    line-height: 1;
+}
+
+.nt-close:hover {
+    color: #555;
+}

@@ -1,16 +1,16 @@
-import React from 'react'
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import OneRacun from './OneRacun';
 import axios from 'axios';
 import '../css/AccountsCarousel.css';
 import { PulseLoader } from 'react-spinners';
 
-const Racuni = ({onAccountFocus}) => {
+const Racuni = ({onAccountFocus, refreshTrigger}) => {
     const [racuni,setRacuni]=useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const [isHovered, setIsHovered] = useState(false);
     const [zeroAccountsHook, setZeroAccountsHook] = useState(false);
+    const isFirstLoad = useRef(true);
 
     const handleAccountFocus = (acc) => {
       if(onAccountFocus) 
@@ -25,26 +25,28 @@ const Racuni = ({onAccountFocus}) => {
                 method: 'get',
                 maxBodyLength: Infinity,
                 url: 'http://127.0.0.1:8000/api/korisnik/bankovni-racuni',
-                headers: { 
+                headers: {
                   'Authorization': 'Bearer ' + window.sessionStorage.getItem("user_auth_token")
                 }
-            
               };
-              
+
               axios.request(config)
               .then((response) => {
                 setRacuni(response.data.racuni);
-                response.data.racuni.length === 0 ? setZeroAccountsHook(true) :
-                handleAccountFocus(response.data.racuni[0]);
+                if (response.data.racuni.length === 0) {
+                    setZeroAccountsHook(true);
+                } else if (isFirstLoad.current) {
+                    handleAccountFocus(response.data.racuni[0]);
+                    isFirstLoad.current = false;
+                }
                 setLoading(false);
               })
               .catch((error) => {
                 console.log(error);
               });
-
         }
         fetchRacuni();
-    },[])
+    },[refreshTrigger])
 
       const handleNext = () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % racuni.length);

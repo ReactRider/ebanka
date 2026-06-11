@@ -10,7 +10,7 @@ import PopUp from './PopUp';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import { PulseLoader } from 'react-spinners';
 
-const UserHome = ({accountFocus, focusedAcc}) => {
+const UserHome = ({accountFocus, focusedAcc, refreshTrigger}) => {
     const navigate = useNavigate();
 
     const [transactions, setTransactions] = useState([]);
@@ -333,6 +333,12 @@ const UserHome = ({accountFocus, focusedAcc}) => {
       setIsExportEmpty(false);
     }
 
+    useEffect(() => {
+      if (!refreshTrigger || !focusedAcc) return;
+      getAccountDetails(focusedAcc);
+      prepareTransactions(focusedAcc);
+    }, [refreshTrigger]);
+
     const messageText='Za izabrani mesec nema transakcija za dati nalog!';
 
     const mapOfMonths = {
@@ -352,7 +358,7 @@ const UserHome = ({accountFocus, focusedAcc}) => {
 
   return (
       <>
-        <Racuni onAccountFocus={handleAccountFocus} />
+        <Racuni onAccountFocus={handleAccountFocus} refreshTrigger={refreshTrigger} />
         <ChatBot />
 
         {showDetails && <TransactionDetails details={selectedTransaction} closeDetails={closeDetails}/>}

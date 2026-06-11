@@ -58,6 +58,7 @@ const LogInPageAdmin = () => {
         if(adminData.banka_id===0){
           axios.post("http://127.0.0.1:8000/api/admin/login-system-admin", adminData)
           .then( (res) => {
+        
               if(res.data.requires_2fa) {
                   setAdminType('system');
                   setStep('verify');
@@ -102,7 +103,7 @@ const LogInPageAdmin = () => {
 
         axios.post(verifyUrl, {
             email: adminData.email,
-            otp_code: otpCode,
+            code: otpCode,
         }).then( (res) => {
             if(res.data.access_token) {
                 if(adminType === 'system') {
@@ -224,6 +225,7 @@ const LogInPageAdmin = () => {
                         id="formOtp"
                         className="form-control form-control-lg"
                         maxLength={6}
+                        autoComplete="off"
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value)}
                         placeholder="000000"

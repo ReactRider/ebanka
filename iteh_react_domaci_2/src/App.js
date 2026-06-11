@@ -26,11 +26,25 @@ import SubAdminHomeKorisnici from './components/SubAdminHome';
 import UsersAccPageForAdmin from './components/UsersAccPageForAdmin';
 // DODATO: stranica za zakazane transakcije
 import ZakazaneTransakcije from './components/ZakazaneTransakcije';
+import NotificationToast from './components/NotificationToast';
+import useIncomingPaymentNotifications from './hooks/useIncomingPaymentNotifications';
 
 function App() {
 
   const [logInStatusUser, setLogInStatusUser]=useState(false);
   const [focusedAcc, setFocusedAcc] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleIncomingNotification = (notif) => {
+    setNotifications(prev => [...prev, notif]);
+    setRefreshTrigger(prev => prev + 1);
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== notif.id));
+    }, 6000);
+  };
+
+  useIncomingPaymentNotifications(logInStatusUser, handleIncomingNotification);
 
   useEffect( () => {
     if(window.sessionStorage.getItem("user_auth_token") != null)
@@ -46,13 +60,14 @@ function App() {
   }
 
   return (
+    <>
       <BrowserRouter>
         <Routes>
           
           <Route path="/" element={<Navigate to="/user/login"/>} />
 
           <Route path="/" element={<NewNavBar login={1}/>}>
-            <Route path="user/home" element={<UserHome accountFocus={handleAccountFocus} focusedAcc={focusedAcc}/> }/>
+            <Route path="user/home" element={<UserHome accountFocus={handleAccountFocus} focusedAcc={focusedAcc} refreshTrigger={refreshTrigger}/> }/>
             <Route path="user/logout" element={<UserLogout handleLogInStatus={handleLogInStatus}/>} />
             <Route path="user/detalji-naloga" element={<AccountInfo/>}/>
             <Route path="user/upload-photo" element={<ProfileImageUpload/>}/>
@@ -101,6 +116,11 @@ function App() {
           
         </Routes>
       </BrowserRouter>
+      <NotificationToast
+        notifications={notifications}
+        onClose={(id) => setNotifications(prev => prev.filter(n => n.id !== id))}
+      />
+    </>
   );
 }
 
