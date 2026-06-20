@@ -130,6 +130,7 @@ Route::middleware(["auth:sanctum", "isSubAdmin"])->group(function() {
     Route::get("/admin/informacije-o-nalogu-sub-admin", [AccountInfoController::class, "showAdmin"]);
 
     Route::get("/admin/broj-korisnika-godisnje/{id}",[AdminController::class,"userPerYear"]);
+    Route::get("/admin/broj-korisnika-mesecno/{id}",[AdminController::class,"userPerMonth"]);
     Route::get("/admin/broj-tipova-racuna/{id}",[AdminController::class,"percentTypeRacun"]);
     Route::get("/admin/izvrsene-transakcije/{racun_id}",[TransakcijaController::class,"prikaz_transakcija"]);
     Route::get("/admin/racuni-korisnika-uBanci/{banka_id}/{user_id}",[AdminController::class, "racuni_za_korisnika_u_banci"]);

@@ -94,8 +94,54 @@ class AdminController extends Controller
     }
 
 
+    public function userPerMonth($banka_id){
+        $admin = Auth::user();
+        if ($admin->banka_id != $banka_id) {
+            return response()->json(['Greska!', 'Admin ne pristupa podacima odgovarajuce banke!']);
+        }
+
+        $banka   = Banka::findOrFail($banka_id);
+        $racuni  = $banka->racun;
+        $userIds = [];
+
+        foreach ($racuni as $racun) {
+            $user = $racun->user;
+            if ($user) {
+                $userIds[] = $user->id;
+            }
+        }
+
+        $userIds = array_values(array_unique($userIds));
+
+        $start = now()->subMonths(5)->startOfMonth();
+
+        $rows = User::whereIn('id', $userIds)
+            ->where('created_at', '>=', $start)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, COUNT(*) as count")
+            ->groupBy('month_key')
+            ->orderBy('month_key')
+            ->get()
+            ->keyBy('month_key');
+
+        $srMeseci = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+
+        $result = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $d   = now()->subMonths($i);
+            $key = $d->format('Y-m');
+            $label = $srMeseci[(int)$d->format('m') - 1] . ' ' . $d->format('Y');
+            $result[] = [
+                'month' => $label,
+                'count' => isset($rows[$key]) ? (int)$rows[$key]->count : 0,
+            ];
+        }
+
+        return response()->json($result);
+    }
+
     public function percentTypeRacun($banka_id){
         $admin=Auth::user();
+        
         if($admin->banka_id==$banka_id){
             $banka = Banka::findOrFail($banka_id);
             $racuni = $banka->racun;
