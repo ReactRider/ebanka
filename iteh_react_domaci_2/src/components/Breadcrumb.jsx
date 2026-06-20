@@ -37,10 +37,14 @@ const breadcrumbNameMap = {
 };
 
 // Segments that act as intermediate path steps but should redirect to a logical page
-const redirectMap = {
-  '/user': '/user/home',
-  '/user/new-transaction': '/user/home',
-  '/admin': '/admin/home',
+const getRedirectMap = () => {
+  const isSubAdmin = window.sessionStorage.getItem('sub_admin_auth_token') != null;
+  return {
+    '/user': '/user/home',
+    '/user/new-transaction': '/user/home',
+    '/admin': isSubAdmin ? '/admin/home/sub' : '/admin/home',
+    '/admin/home': isSubAdmin ? '/admin/home/sub' : '/admin/home',
+  };
 };
 
 // These path segments are displayed as plain text (not clickable links)
@@ -62,6 +66,7 @@ const Breadcrumbs = () => {
 
   if (!isLoggedIn) return null;
 
+  const redirectMap = getRedirectMap();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
   return (

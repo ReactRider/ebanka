@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import PopUp from './PopUp';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ConfirmModal from './ConfirmModal';
 
 const CrateNewBank = () => {
     const [isBankCreated, setIsBankCreated] = useState(false);
     const [isBankFailed, setIsBankFailed] = useState(false);
+    const [pendingAction, setPendingAction] = useState(null);
     const [bankaData, setBankaData] = useState({
             naziv: '',
             grad: '',
@@ -45,73 +47,59 @@ const CrateNewBank = () => {
     }
 
     function handleReset() {
-        if(!window.confirm("Da li ste sigurni?")) {
-            return;
-        }  
-
-        let input_elems = document.querySelectorAll("input, select");
-
-        for(let i = 0; i < input_elems.length; i++) 
-            input_elems[i].value = "";
+        setPendingAction(() => () => {
+            let input_elems = document.querySelectorAll("input, select");
+            for(let i = 0; i < input_elems.length; i++)
+                input_elems[i].value = "";
+        });
     }
 
     function handleRegistration(e) {
-        if(!window.confirm("Da li ste sigurni?")) {
-            return;
-        }
-
         e.preventDefault();
-
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: 'http://127.0.0.1:8000/api/admin/banke',
-            headers: { 
-                'Authorization': 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
-            },
-            data: bankaData
-        };  
-              
-        axios.request(config)
-        .then( (res) => {
-            setIsBankCreated(true);
-        })
-        .catch((e) => {
-            setIsBankFailed(true);
-            console.log(e);
+        setPendingAction(() => () => {
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'http://127.0.0.1:8000/api/admin/banke',
+                headers: {
+                    'Authorization': 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
+                },
+                data: bankaData
+            };
+            axios.request(config)
+            .then(() => { setIsBankCreated(true); })
+            .catch((e) => { setIsBankFailed(true); console.log(e); });
         });
-        
     }
 
-
     function handleBankUpdate() {
-        if(!window.confirm("Da li ste sigurni?")) return;
-            
-        let config = {
-            method: 'patch',
-            maxBodyLength: Infinity,
-            url: `http://127.0.0.1:8000/api/admin/banke/${details.id}`,
-            headers : {
-                'Authorization' : 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
-            },
-            data: bankaData
-        }
-
-        axios.request(config)
-        .then( (res) => {
-            console.log(res.data);
-            console.log("successful user update");
-        })
-        .catch( (e) => {
-            console.log("Desila se greska: " + e);
-        })
-
-        navigate("/admin/sve-banke");
+        setPendingAction(() => () => {
+            let config = {
+                method: 'patch',
+                maxBodyLength: Infinity,
+                url: `http://127.0.0.1:8000/api/admin/banke/${details.id}`,
+                headers: {
+                    'Authorization': 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
+                },
+                data: bankaData
+            };
+            axios.request(config)
+            .then((res) => { console.log(res.data); })
+            .catch((e) => { console.log("Desila se greska: " + e); });
+            navigate("/admin/sve-banke");
+        });
     }
 
 
   return (
     <div className="main-container-create-new-bank">
+      {pendingAction !== null && (
+        <ConfirmModal
+          message="Da li ste sigurni da želite da nastavite sa ovom akcijom?"
+          onConfirm={() => { pendingAction(); setPendingAction(null); }}
+          onCancel={() => setPendingAction(null)}
+        />
+      )}
         <div className="title-container-create-new-user"> 
             <h1>Kreiranje naloga banke</h1>
         </div>

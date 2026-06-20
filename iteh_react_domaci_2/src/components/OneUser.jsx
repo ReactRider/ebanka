@@ -4,11 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import PopUp from './PopUp.jsx';
 import axios from 'axios';
 import CreateNewUser from './CreateNewUser.jsx';
+import ConfirmModal from './ConfirmModal';
 
 const OneUser = ({details, closeDetails}) => {
   const [allAccounts, setAllAccounts] = useState([]);
   const [isEverythingDone, setIsEverythingDone] = useState(false);
   const [toModifyUser, setToModifyUser] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
   const closeMessageBox = () => {
@@ -16,9 +18,7 @@ const OneUser = ({details, closeDetails}) => {
     window.location.reload();
   }
 
-  function handleUserDelete() {
-    if (!window.confirm("Da li ste sigurni?")) return;
-  
+  function executeUserDelete() {
     let config_get_all_accounts = {
       method: 'get',
       maxBodyLength: Infinity,
@@ -77,7 +77,14 @@ const OneUser = ({details, closeDetails}) => {
   };
   
   return (
-    <div className='oneUser-container'> 
+    <div className='oneUser-container'>
+      {showDeleteConfirm && (
+        <ConfirmModal
+          message="Da li ste sigurni da želite da obrišete ovog korisnika? Ova akcija se ne može poništiti."
+          onConfirm={() => { setShowDeleteConfirm(false); executeUserDelete(); }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
       <h3 className='naslov'>Detalji izabranog korisnika</h3>
       <br/>
       <div className="paragraf"><p><span className="span1">ID: </span><span className="span2">{details.id}</span></p></div>
@@ -96,7 +103,7 @@ const OneUser = ({details, closeDetails}) => {
       <div className='second-user-container'>
         <button className='closed-btn'  onClick={closeDetails}>Zatvori</button>
         <button className='closed-btn' onClick={handleUserModify}>Izmeni</button>
-        <button className='closed-btn' onClick={handleUserDelete}>Obrisi</button>
+        <button className='closed-btn' onClick={() => setShowDeleteConfirm(true)}>Obrisi</button>
       </div>
       <div className='drugi-kontainer-dugmadi'>
         <button className='details-btn' onClick={()=>{handleUserBankAccounts()}}>Prikaz svih racuna korisnika</button>

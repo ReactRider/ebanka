@@ -3,11 +3,13 @@ import '../css/CreateNew.css';
 import { useState , useEffect} from 'react';
 import axios from 'axios';
 import PopUp from './PopUp';
+import ConfirmModal from './ConfirmModal';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function CreateNewUser() {
     const [isUserCreated, setIsUserCreated] = useState(false);
     const [isUserFailed, setIsUserFailed] = useState(false);
+    const [pendingAction, setPendingAction] = useState(null);
     const location = useLocation();
     const {toModify = false, details = {} } = location.state || {};
     const navigate = useNavigate();
@@ -45,14 +47,11 @@ function CreateNewUser() {
     }
 
     function handleReset() {
-        if(!window.confirm("Da li ste sigurni?")) {
-            return;
-        }  
-
-        let input_elems = document.querySelectorAll("input, select");
-
-        for(let i = 0; i < input_elems.length; i++) 
-            input_elems[i].value = "";
+        setPendingAction(() => () => {
+            let input_elems = document.querySelectorAll("input, select");
+            for(let i = 0; i < input_elems.length; i++)
+                input_elems[i].value = "";
+        });
     }
 
     function handleInput(e) {
@@ -65,70 +64,56 @@ function CreateNewUser() {
     }
 
     function handleRegistration(e) {
-        if(!window.confirm("Da li ste sigurni?")) {
-            return;
-        }
-
         e.preventDefault();
-
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: 'http://127.0.0.1:8000/api/admin/korisnici',
-            headers: { 
-                'Authorization': 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
-            },
-            data: userData
-        };  
-              
-        axios.request(config)
-        .then( (res) => {
-            setIsUserCreated(true);
-        })
-        .catch((e) => {
-            setIsUserFailed(true);
-            console.log(e);
+        setPendingAction(() => () => {
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'http://127.0.0.1:8000/api/admin/korisnici',
+                headers: {
+                    'Authorization': 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
+                },
+                data: userData
+            };
+            axios.request(config)
+            .then(() => { setIsUserCreated(true); })
+            .catch((e) => { setIsUserFailed(true); console.log(e); });
         });
-
-        
     }
 
     function handleUserUpdate() {
-        if(!window.confirm("Da li ste sigurni?")) return;
+        setPendingAction(() => () => {
+            let x = document.getElementById("datum_rođenja").value;
+            const [year, month, day] = x.split("-");
+            const formattedDate = `${year}${month}${day}`;
+            setUserData(prev => ({ ...prev, datum_rođenja: formattedDate }));
 
-        let x = document.getElementById("datum_rođenja").value;
-        const [year, month, day] = x.split("-");
+            let config = {
+                method: 'patch',
+                maxBodyLength: Infinity,
+                url: `http://127.0.0.1:8000/api/admin/promeni-korisnika/${details.id}`,
+                headers: {
+                    'Authorization': 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
+                },
+                data: userData
+            };
+            axios.request(config)
+            .then((res) => { console.log(res.data); })
+            .catch((e) => { console.log("Desila se greska: " + e); });
 
-        const formattedDate = `${year}${month}${day}`;
-        setUserData(prev => ({
-        ...prev,
-        datum_rođenja: formattedDate
-        }));
-            
-        let config = {
-            method: 'patch',
-            maxBodyLength: Infinity,
-            url: `http://127.0.0.1:8000/api/admin/promeni-korisnika/${details.id}`,
-            headers : {
-                'Authorization' : 'Bearer ' + window.sessionStorage.getItem("admin_auth_token")
-            },
-            data: userData
-        }
-
-        axios.request(config)
-        .then( (res) => {
-            console.log(res.data);
-            console.log("successful user update");
-        })
-        .catch( (e) => {
-            console.log("Desila se greska: " + e);
-        })
-
-        navigate("/admin/svi-korisnici");
+            navigate("/admin/svi-korisnici");
+        });
     }
 
   return (
     <div className="main-container-create-new-user">
+      {pendingAction !== null && (
+        <ConfirmModal
+          message="Da li ste sigurni da želite da nastavite sa ovom akcijom?"
+          onConfirm={() => { pendingAction(); setPendingAction(null); }}
+          onCancel={() => setPendingAction(null)}
+        />
+      )}
       <div className="title-container-create-new-user">
         <h1>Kreiranje naloga korisnika</h1>
       </div>

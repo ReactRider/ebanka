@@ -1,16 +1,18 @@
-import React from 'react'
-;import '../css/OneUser.css';
+import React from 'react';
+import '../css/OneUser.css';
 import { useNavigate } from 'react-router-dom';
 import PopUp from './PopUp.jsx';
 import axios from 'axios';
 import {useState, useEffect} from 'react';
 import CreateNewBank from './CreateNewBank.jsx';
+import ConfirmModal from './ConfirmModal';
 
 
 const OneBank = ({details, closeDetails}) => {
     const [allAccounts, setAllAccounts] = useState([]);
   const [isEverythingDone, setIsEverythingDone] = useState(false);
   const [toModifyBank, setModifyBank] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
   const closeMessageBox = () => {
@@ -19,9 +21,7 @@ const OneBank = ({details, closeDetails}) => {
   }
 
 
-  function handleUserDelete() {
-    if (!window.confirm("Da li ste sigurni?")) return;
-  
+  function executeBankDelete() {
     let config_get_all_accounts = {
       method: 'get',
       maxBodyLength: Infinity,
@@ -76,7 +76,14 @@ const OneBank = ({details, closeDetails}) => {
   }
   
   return (
-    <div className='oneBank-container'> 
+    <div className='oneBank-container'>
+      {showDeleteConfirm && (
+        <ConfirmModal
+          message="Da li ste sigurni da želite da obrišete ovu banku? Ova akcija se ne može poništiti."
+          onConfirm={() => { setShowDeleteConfirm(false); executeBankDelete(); }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
       <h3 className='naslov'>Detalji izabrane banke</h3>
       <br/>
       <div className="paragraf"><p><span className="span1">ID: </span><span className="span2">{details.id}</span></p></div>
@@ -87,7 +94,7 @@ const OneBank = ({details, closeDetails}) => {
       <div className='second-user-container'>
       <button className='closed-btn'  onClick={closeDetails}>Zatvori</button>
       <button className='closed-btn' onClick={handleUserModify}>Izmeni</button>
-      <button className='closed-btn' onClick={handleUserDelete}>Obrisi</button>
+      <button className='closed-btn' onClick={() => setShowDeleteConfirm(true)}>Obrisi</button>
       </div>
 
       {isEverythingDone && <PopUp closeMessageBox={closeMessageBox} messageText={"Banka je uspešno obrisana."} />}

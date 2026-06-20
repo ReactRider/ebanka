@@ -1,0 +1,72 @@
+.cm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.cm-modal {
+    background: #fff;
+    border-radius: 1em;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 3em 3.5em;
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
+}
+
+.cm-title {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #9A616D;
+    margin-bottom: 0.6em;
+}
+
+.cm-text {
+    font-size: 1.3em;
+    color: #555;
+    margin-bottom: 2em;
+    line-height: 1.6;
+}
+
+.cm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.2em;
+}
+
+.cm-btn-cancel {
+    padding: 12px 32px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    background: #fff;
+    color: #555;
+    font-size: 1.05em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.cm-btn-cancel:hover {
+    background-color: #f0f0f0;
+}
+
+.cm-btn-confirm {
+    padding: 12px 32px;
+    border-radius: 6px;
+    border: 1.5px solid #c0392b;
+    background: #c0392b;
+    color: #fff;
+    font-size: 1.05em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.cm-btn-confirm:hover {
+    background-color: #a93226;
+    border-color: #a93226;
+}

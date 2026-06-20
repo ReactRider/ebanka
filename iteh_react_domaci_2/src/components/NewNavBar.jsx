@@ -21,9 +21,17 @@ const NewNavBar = ({login}) => {
         <div className={`${(login === 1) ? "container-first-group-logged-in" : "container-first-group-logged-out"}`}>
 
           <div className="app-logo">
-            <a className="navbar-brand" href="/">
+            <Link
+              className="navbar-brand"
+              to={
+                login === 1 ? '/user/home' :
+                login === 2 ? '/admin/home' :
+                login === 3 ? '/admin/home/sub' :
+                '/user/login'
+              }
+            >
               E-Banka
-            </a>
+            </Link>
           </div>
 
           <div className={`${(login === 1) ? "nav-items-logged-in" : "nav-items-logged-out"}`}>

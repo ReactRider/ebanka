@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../css/Charts.css';
 import {
@@ -13,41 +12,36 @@ import {
 } from 'recharts';
 
 const UserYearCharts = ({bid}) => {
-    
-    const [data, setData] = useState([]);
+
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    
-  let config = {
-  method: 'get',
-  maxBodyLength: Infinity,
-  url: `http://127.0.0.1:8000/api/admin/broj-korisnika-godisnje/${bid}`,
-  headers: { 
-    'Authorization': 'Bearer '+window.sessionStorage.getItem("sub_admin_auth_token"), 
-  },
-};
+    axios.get(`http://127.0.0.1:8000/api/admin/broj-korisnika-mesecno/${bid}`, {
+      headers: { Authorization: 'Bearer ' + window.sessionStorage.getItem('sub_admin_auth_token') },
+    })
+    .then(res => setData(res.data))
+    .catch(err => console.log(err));
+  }, [bid]);
 
-axios.request(config)
-.then((response) => {
-    setData(response.data);
-})
-.catch((error) => {
-  console.log(error);
-});
-  }, []);
-
-
+  const maxCount = Math.max(...data.map(d => d.count), 1);
+  const yMax = maxCount + 1;
+  const yTicks = Array.from({ length: yMax + 1 }, (_, i) => i);
 
   return (
     <div style={{ width: '70%', height: 550 }}>
-      <h3 className='tekst-izbora-centriran'>Godišnji rast broja korisnika</h3>
+      <h3 className='tekst-izbora-centriran'>Broj novih korisnika po mesecu (poslednjih 6 meseci)</h3>
       <ResponsiveContainer>
         <LineChart data={data}>
-          <CartesianGrid stroke="#ccc" vertical={false}/>
-          <XAxis dataKey="year" tick={{ fontSize: 16, fill: '#404040', fontWeight: 500}} />
-          <YAxis tick={{ fontSize: 16, fill: '#404040', fontWeight: 500}} domain={[0,10]} ticks={[0,1,2,3,4,5,6,7,8,9,10]}/>
+          <CartesianGrid stroke="#ccc" vertical={false} />
+          <XAxis dataKey="month" tick={{ fontSize: 14, fill: '#404040', fontWeight: 500 }} />
+          <YAxis
+            tick={{ fontSize: 14, fill: '#404040', fontWeight: 500 }}
+            domain={[0, yMax]}
+            ticks={yTicks}
+            allowDecimals={false}
+          />
           <Tooltip />
-          <Line type="linear" dataKey="count" stroke="#3C5E96" strokeWidth={2} />
+          <Line type="linear" dataKey="count" name="Korisnici" stroke="#3C5E96" strokeWidth={2} dot={{ r: 4 }} />
         </LineChart>
       </ResponsiveContainer>
     </div>

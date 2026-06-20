@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PopUp from './PopUp.jsx';
 import Options from './Options.jsx';
 import { FiFilter } from 'react-icons/fi';
+import ConfirmModal from './ConfirmModal';
 
 
 const Table = ({tipTabele}) => {
@@ -54,6 +55,7 @@ const Table = ({tipTabele}) => {
     const[clickedBank, setClickedBank]=useState(false);
     const[loading, setLoading]=useState(true);
     const [bankAccountDeleted, setBankAccountDeleted] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     // State koji cuva sve podatke o racunima korisnika, samom korisniku, povezanim bankama(racuncollection)
     const [details, setDetails] = useState([]);
@@ -297,14 +299,7 @@ const Table = ({tipTabele}) => {
     }));
   };
 
-  const handleBankAccountDelete = () => {
-    if(selectedRadioBtn.length == 0) {
-      setNoAccountToDeleteChosen(true);
-      return;
-    }
-
-    if(!window.confirm("Da li ste sigurni?")) return;
-
+  const executeBankAccountDelete = () => {
     let url = '';
     switch(selectedRadioBtn[0]) {
       case 'tekuci':
@@ -348,8 +343,23 @@ const Table = ({tipTabele}) => {
 
   }
 
+  const handleBankAccountDelete = () => {
+    if(selectedRadioBtn.length == 0) {
+      setNoAccountToDeleteChosen(true);
+      return;
+    }
+    setShowDeleteConfirm(true);
+  }
+
   return (
     <>
+    {showDeleteConfirm && (
+      <ConfirmModal
+        message="Da li ste sigurni da želite da obrišete ovaj bankovni račun? Ova akcija se ne može poništiti."
+        onConfirm={() => { setShowDeleteConfirm(false); executeBankAccountDelete(); }}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
+    )}
     {loading===true ? <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", marginTop: '-5em' }}>
       <PulseLoader
         color="#9A616D"     

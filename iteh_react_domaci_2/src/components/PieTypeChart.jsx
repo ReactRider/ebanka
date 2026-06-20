@@ -17,7 +17,7 @@ const PieTypeChart = ({ b_id }) => {
     maxBodyLength: Infinity,
     url: `http://127.0.0.1:8000/api/admin/broj-tipova-racuna/${b_id}`,
     headers: { 
-        'Authorization': 'Bearer 19|ePLgB6XJ4LDkXWXV3wYxOMA12dJ23qNg4Ibz6DSi0546b4d0'
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('sub_admin_auth_token')
     },
     };
 
