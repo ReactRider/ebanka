@@ -188,9 +188,39 @@ class TransakcijaController extends Controller
 
     public function prikaz_transakcija($racun_id){
         $racun = Racun::findOrFail($racun_id);
-        // DODATO: iskljucujemo templejte zakazanih transakcija iz istorije
-        $t = $racun->transakcija()->obicne()->get();
-        return new TransakcijaCollection($t);
+
+        // Find this account's broj_racuna from whichever sub-table it lives in
+        $modeli = [TekuciRacun::class, StudentskiRacun::class, StedniRacun::class, DevizniRacun::class];
+        $brojRacuna = null;
+        foreach ($modeli as $model) {
+            $podracun = $model::where('racun_id', $racun_id)->first();
+            if ($podracun) { $brojRacuna = $podracun->broj_racuna; break; }
+        }
+
+        $odlazne = $racun->transakcija()->obicne()->get()->map(function($t) {
+            $arr = $t->toArray();
+            $arr['tip_transakcije'] = 'odlazna';
+            return $arr;
+        });
+
+        $dolazne = collect();
+        if ($brojRacuna) {
+            $dolazne = Transakcija::where('broj_racuna_primaoca', $brojRacuna)
+                ->where('racun_id', '!=', $racun_id)
+                ->where(function($q) { $q->where('is_scheduled', false)->orWhereNull('is_scheduled'); })
+                ->get()
+                ->map(function($t) {
+                    $arr = $t->toArray();
+                    $arr['tip_transakcije'] = 'dolazna';
+                    return $arr;
+                });
+        }
+
+        $sve = $odlazne->concat($dolazne)
+            ->sortByDesc(fn($t) => $t['datum'] . ' ' . $t['vreme'])
+            ->values();
+
+        return response()->json(['transakcije' => $sve]);
     }
 
     // DODATO: vraca sve aktivne zakazane transakcije za dati racun

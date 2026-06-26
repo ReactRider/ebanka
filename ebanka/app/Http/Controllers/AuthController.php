@@ -20,7 +20,7 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json('greska pri log in-u', 401);
+            return response()->json('greska pri log in');
         }
 
         $korisnik = Auth::user();
@@ -28,7 +28,7 @@ class AuthController extends Controller
         $otp =strval(random_int(100001, 999999));
 
         $korisnik->otp_code       = $otp;
-        $korisnik->otp_expires_at = Carbon::now()->addMinutes(10);
+        $korisnik->otp_expires_at = Carbon::now()->addMinutes(1);
         $korisnik->save();
 
         Auth::logout();
@@ -51,15 +51,22 @@ class AuthController extends Controller
         }
 
         if (
-            $korisnik->otp_code !== $request->code ||
-            is_null($korisnik->otp_expires_at)        ) {
-            return response()->json('Nevažeći ili istekao kod.', 401);
+            $korisnik->otp_code !== $request->code 
+                ) {
+            return response()->json('Uneli ste neispravan kod.');
+                }
+
+        if (
+            Carbon::now() > $korisnik->otp_expires_at
+        ) {
+            return response()->json('Kod je istekao - molimo generišite kod novom prijavom.');
         }
 
         $korisnik->otp_code       = null;
         $korisnik->otp_expires_at = null;
         $korisnik->save();
 
+        $korisnik->tokens()->delete();
         $token = $korisnik->createToken('ebanka')->plainTextToken;
 
         return response()->json(['token' => $token]);
@@ -68,7 +75,7 @@ class AuthController extends Controller
     public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['poruka' => 'Uspesno odjavljivanje iz aplikacije!'], 200);
+        return response()->json(['poruka' => 'Uspešno odjavljivanje iz aplikacije!'], 200);
     }
 
 
@@ -115,13 +122,13 @@ class AuthController extends Controller
         $admin = Admin::where('email', $request->email)->first();
 
         if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return response()->json('greska pri log in-u admina', 401);
+            return response()->json('greska pri log in-u admina');
         }
 
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $admin->otp_code       = $otp;
-        $admin->otp_expires_at = Carbon::now()->addMinutes(10);
+        $admin->otp_expires_at = Carbon::now()->addMinutes(1);
         $admin->save();
 
         $admin->notify(new SendOtpNotification($otp));
@@ -139,13 +146,13 @@ class AuthController extends Controller
         $admin = Admin::where('email', $request->email)->first();
 
         if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return response()->json('greska pri log in-u admina', 401);
+            return response()->json('greska pri log in-u admina');
         }
 
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $admin->otp_code       = $otp;
-        $admin->otp_expires_at = Carbon::now()->addMinutes(10);
+        $admin->otp_expires_at = Carbon::now()->addMinutes(1);
         $admin->save();
 
         $admin->notify(new SendOtpNotification($otp));
@@ -162,21 +169,26 @@ class AuthController extends Controller
         $admin = Admin::where('email', $request->email)->first();
 
         if (!$admin) {
-            return response()->json('Admin nije pronađen.', 404);
+            return response()->json('Admin nije pronađen.');
         }
 
         if (
-            $admin->otp_code !== $request->code ||
-            is_null($admin->otp_expires_at) ||
+            $admin->otp_code !== $request->code
+        ) {
+            return response()->json('Uneli ste netačan kod.');
+        }
+
+        if(
             Carbon::now()->isAfter($admin->otp_expires_at)
         ) {
-            return response()->json('Nevažeći ili istekao kod.', 401);
+            return response()->json('Kod je istekao - molimo generišite kod novom prijavom.');
         }
 
         $admin->otp_code       = null;
         $admin->otp_expires_at = null;
         $admin->save();
 
+        $admin->tokens()->delete();
         $token = $admin->createToken('Admin Access Token')->plainTextToken;
 
         return response()->json([
