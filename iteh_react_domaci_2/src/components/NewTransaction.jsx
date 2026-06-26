@@ -4,6 +4,7 @@ import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import PopUp from './PopUp';
+import ConfirmModal from './ConfirmModal';
 
 
 const NewTransaction = ({focusedAcc, tip}) => {
@@ -52,14 +53,15 @@ const NewTransaction = ({focusedAcc, tip}) => {
 
     const [datum, setDatum] = useState('');
     const [successfulTran, setSuccessfulTran]=useState(false);
-    const messageText='Transakcija uspesno izvrsena!';
-    const failedTransactionMessage='Interne transakcije nije moguce izvrsiti';
+    const messageText='Transakcija uspešno izvršena!';
+    const failedTransactionMessage='Internu transakciju nije moguće izvršiti!';
     const navigate=useNavigate();
 
     // DODATO: stanje za zakazanu (recurring) transakciju
     const [isScheduled, setIsScheduled] = useState(false);
     const [danUMesecu, setDanUMesecu] = useState('');
     const [scheduledSuccess, setScheduledSuccess] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     
   useEffect(() => {
     const d = new Date();
@@ -255,7 +257,7 @@ const NewTransaction = ({focusedAcc, tip}) => {
         if(transactionData.sifra_placanja!=''){
             data.append('sifra_placanja',transactionData.sifra_placanja);
         }else{
-            error.sifra_placanja='Morate izabrati sifru placanja';
+            error.sifra_placanja='Morate izabrati šifru placanja';
         }
 
         if (Object.keys(error).length > 0) {
@@ -527,12 +529,22 @@ const NewTransaction = ({focusedAcc, tip}) => {
         )}
 
         <div className='izvrsi-placanje-container'>
-            <button type="submit" className="btn-transaction" onClick={(ex)=>{handleNewTransaction(ex)}}>
+            <button type="button" className="btn-transaction" onClick={() => setShowConfirm(true)}>
                 {isScheduled ? 'Izvrši Transakciju' : 'Izvrši plaćanje'}
             </button>
         </div>
 
         </form>
+        {showConfirm && (
+            <ConfirmModal
+                title="Potvrda transakcije"
+                message="Da li ste sigurni da želite da izvršite ovu transakciju?"
+                confirmText="Izvrši"
+                cancelText="Odustani"
+                onConfirm={() => { setShowConfirm(false); handleNewTransaction({ preventDefault: () => {} }); }}
+                onCancel={() => setShowConfirm(false)}
+            />
+        )}
         {successfulTran && <PopUp closeMessageBox={closeMessageBox} messageText={messageText}/>}
         {/* DODATO: poruka uspesnog zakazivanja */}
         {scheduledSuccess && <PopUp closeMessageBox={closeMessageBox} messageText={'Zakazana transakcija je kreirana!'} />}

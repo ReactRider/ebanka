@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import '../css/LogInPageUser.css';
 import adminLogInImage from '../slike/admin_login.jpeg';
+import PopUp from './PopUp';
 
 const LogInPageAdmin = () => {
     const navigate = useNavigate();
@@ -34,6 +35,8 @@ const LogInPageAdmin = () => {
     const [step, setStep] = useState('login'); // 'login' | 'verify'
     const [otpCode, setOtpCode] = useState('');
     const [adminType, setAdminType] = useState(''); // 'system' | 'sub'
+    const [otpError, setOtpError] = useState(null);
+    const [otpEmpty, setOtpEmpty] = useState(false);
 
     useEffect(()=>{
       let config = {
@@ -67,13 +70,14 @@ const LogInPageAdmin = () => {
                   console.log(res.data);
                   window.sessionStorage.setItem("admin_auth_token", res.data.access_token);
                   navigate('/admin/home');
+              } else {
+                  setOtpError('Neispravan email i/ili lozinka. Proverite unos.');
               }
           })
           .catch( (e) => {
-              alert("Neispravna email adresa i/ili lozinka!");
               console.log(e);
           });
-        }else{
+        } else{
         axios.post("http://127.0.0.1:8000/api/admin/login-sub-admin", adminData)
         .then( (res) => {
             if(res.data.requires_2fa) {
@@ -85,10 +89,11 @@ const LogInPageAdmin = () => {
                 window.sessionStorage.setItem("sub_admin_auth_token", res.data.access_token);
                 navigate('/admin/home/sub');
                 localStorage.setItem('banka_id',adminData.banka_id)
+            } else {
+                setOtpError('Neispravan email i/ili lozinka. Proverite unos.');
             }
         })
         .catch( (e) => {
-            alert("Neispravna email adresa i/ili lozinka!");
             console.log(e);
         });
       }
@@ -96,6 +101,11 @@ const LogInPageAdmin = () => {
 
     function handleVerify(e) {
         e.preventDefault();
+
+        if(otpCode == ''){
+          setOtpEmpty(true);
+          return;
+        }
 
         const verifyUrl = adminType === 'system'
             ? "http://127.0.0.1:8000/api/admin/verify-2fa-system-admin"
@@ -114,10 +124,12 @@ const LogInPageAdmin = () => {
                     navigate('/admin/home/sub');
                     localStorage.setItem('banka_id', adminData.banka_id);
                 }
+            } else {
+                setOtpError(res.data);
             }
         })
         .catch( (e) => {
-            alert("Neispravan ili istekli verifikacioni kod!");
+            setOtpError('Neispravan ili istekli verifikacioni kod. Pokušajte ponovo.');
             console.log(e);
         });
     }
@@ -129,6 +141,7 @@ const LogInPageAdmin = () => {
     }
 
   return (
+    <>
     <section className="vh-94" style={{ backgroundColor: "#ba919b", height: '94vh' }}>
   <div className="container py-5 h-100">
     <div className="row d-flex justify-content-center align-items-center h-100">
@@ -160,6 +173,7 @@ const LogInPageAdmin = () => {
                         name="email"
                         id="formEmail"
                         className="form-control form-control-lg"
+                        autoComplete='off'
                       />
                       <label className="form-label" htmlFor="formEmail">
                         Email adresa
@@ -227,9 +241,9 @@ const LogInPageAdmin = () => {
                         maxLength={6}
                         autoComplete="off"
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value)}
+                        onChange={(e) => { setOtpCode(e.target.value); setOtpEmpty(false); }}
                         placeholder="000000"
-                        style={{ letterSpacing: '0.4em', textAlign: 'center' }}
+                        style={{ letterSpacing: '0.4em', textAlign: 'center', border: otpEmpty ? '3px solid red' : '' }}
                       />
                       <label className="form-label" htmlFor="formOtp">
                         Verifikacioni kod
@@ -263,6 +277,8 @@ const LogInPageAdmin = () => {
     </div>
   </div>
 </section>
+    {otpError && <PopUp closeMessageBox={() => setOtpError(null)} messageText={otpError} />}
+    </>
     )
 }
 

@@ -1,5 +1,6 @@
 import { BrowserRouter, Router, Routes, Route, Navigate } from 'react-router-dom';
 import {useState, useEffect} from "react";
+import axios from 'axios';
 import './App.css';
 import LogInPageUser from './components/LogInPageUser';
 import RegisterPageUser from './components/RegisterPageUser';
@@ -35,6 +36,24 @@ function App() {
   const [focusedAcc, setFocusedAcc] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [sessionKicked, setSessionKicked] = useState(false);
+
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response?.status === 401) {
+          const hasToken =
+            window.sessionStorage.getItem('user_auth_token') ||
+            window.sessionStorage.getItem('admin_auth_token') ||
+            window.sessionStorage.getItem('sub_admin_auth_token');
+          if (hasToken) setSessionKicked(true);
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => axios.interceptors.response.eject(interceptor);
+  }, []);
 
   const handleIncomingNotification = (notif) => {
     setNotifications(prev => [...prev, notif]);
@@ -120,6 +139,24 @@ function App() {
         notifications={notifications}
         onClose={(id) => setNotifications(prev => prev.filter(n => n.id !== id))}
       />
+      {sessionKicked && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:'#fff',borderRadius:'1em',padding:'3em 3.5em',maxWidth:'480px',textAlign:'center',boxShadow:'0 8px 32px rgba(0,0,0,0.3)'}}>
+            <h3 style={{color:'#9A616D',marginBottom:'1em',fontSize:'1.5em'}}>Sesija istekla</h3>
+            <p style={{fontSize:'1.2em',marginBottom:'2em'}}>Nastavite sa radom u novootvorenoj sesiji!</p>
+            <button
+              style={{background:'#9A616D',color:'#fff',border:'none',borderRadius:'0.5em',padding:'12px 36px',fontSize:'1.05em',cursor:'pointer'}}
+              onClick={() => {
+                window.sessionStorage.clear();
+                window.close();
+                setTimeout(() => { window.location.href = '/user/login'; }, 300);
+              }}
+            >
+              Zatvori tab
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

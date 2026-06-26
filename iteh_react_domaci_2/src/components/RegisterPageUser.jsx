@@ -4,6 +4,7 @@ import '../css/RegisterPageUser.css';
 import { useState } from 'react';
 import axios from 'axios';
 import PopUp from './PopUp.jsx';
+import ConfirmModal from './ConfirmModal';
 
 const RegisterPageUser = () => {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ const RegisterPageUser = () => {
     const [isCorrectPassword, setIsCorrectPassword] = useState(true);
     const [isCorrectName, setIsCorrectName] = useState(true);
     const [isCorrectSurname, setIsCorrectSurname] = useState(true);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     // Ako ulogovan korisnik/admin pristupi ruti za registraciju
     useEffect( () => {
@@ -132,6 +134,14 @@ const RegisterPageUser = () => {
     }
 
   return (
+    <>
+    {showResetConfirm && (
+      <ConfirmModal
+        message="Da li ste sigurni da želite da resetujete sva polja? Svi uneti podaci će biti obrisani."
+        onConfirm={() => { handleReset(); setShowResetConfirm(false); }}
+        onCancel={() => setShowResetConfirm(false)}
+      />
+    )}
     <section className="h-100 bg-dark">
   <div className="container py-5 h-100">
     <div className="row d-flex justify-content-center align-items-center h-100">
@@ -145,7 +155,10 @@ const RegisterPageUser = () => {
                 className="img-fluid"
                 style={{
                   borderTopLeftRadius: ".25rem",
-                  borderBottomLeftRadius: ".25rem"
+                  borderBottomLeftRadius: ".25rem",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover"
                 }}
               />
             </div>
@@ -634,7 +647,7 @@ const RegisterPageUser = () => {
 
                 <div className="d-flex justify-content-end pt-3">
                   <button
-                    onClick={handleReset}
+                    onClick={() => setShowResetConfirm(true)}
                     type="button"
                     data-mdb-button-init=""
                     data-mdb-ripple-init=""
@@ -672,7 +685,7 @@ const RegisterPageUser = () => {
   {isUserCreated && <PopUp closeMessageBox={closeMessageBox} messageText="Nalog je uspešno kreiran!"/>}
 
 </section>
-
+  </>
   )
 }
 

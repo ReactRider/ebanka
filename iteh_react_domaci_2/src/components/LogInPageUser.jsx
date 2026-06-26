@@ -3,6 +3,7 @@ import { useState } from 'react'
 import axios from 'axios';
 import {BrowserRouter, Router, Routes, Route, Link, useNavigate} from 'react-router-dom';
 import '../css/LogInPageUser.css';
+import PopUp from './PopUp';
 
 const LoginPageUser = ({handleLogInStatus}) => {
     const navigate = useNavigate();
@@ -32,6 +33,8 @@ const LoginPageUser = ({handleLogInStatus}) => {
 
     const [step, setStep] = useState('login'); // 'login' | 'verify'
     const [otpCode, setOtpCode] = useState('');
+    const [otpError, setOtpError] = useState(null);
+    const [otpEmpty, setOtpEmpty] = useState(false);
 
     function handleInput(e) {
         let newUserData = userData;
@@ -41,7 +44,6 @@ const LoginPageUser = ({handleLogInStatus}) => {
 
     function handleLogin(e) {
         e.preventDefault();
-
         axios.post("http://127.0.0.1:8000/api/korisnik/login", userData).then( (res) => {
             if(res.data.requires_2fa) {
                 setStep('verify');
@@ -49,16 +51,23 @@ const LoginPageUser = ({handleLogInStatus}) => {
                 window.sessionStorage.setItem("user_auth_token", res.data.token);
                 handleLoginState(true);
                 navigate('/user/home');
+            } else {
+                setOtpError('Neispravan email i/ili lozinka. Proverite unos.');
             }
         })
         .catch( (e) => {
-            alert("Neispravan email i/ili lozinka!");
+            setOtpError('Neispravan email i/ili lozinka. Proverite unos.');
             console.log(e);
         })
     }
 
     function handleVerify(e) {
         e.preventDefault();
+
+        if(otpCode == ''){
+          setOtpEmpty(true);
+          return;
+        }
 
         axios.post("http://127.0.0.1:8000/api/korisnik/verify-2fa", {
             email: userData.email,
@@ -68,15 +77,17 @@ const LoginPageUser = ({handleLogInStatus}) => {
                 window.sessionStorage.setItem("user_auth_token", res.data.token);
                 handleLoginState(true);
                 navigate('/user/home');
-            }
+            } else
+              setOtpError(res.data);
         })
         .catch( (e) => {
-            alert("Neispravan ili istekli verifikacioni kod!");
+            setOtpError('Neispravan ili istekli verifikacioni kod. Pokušajte ponovo.');
             console.log(e);
         })
     }
 
   return (
+    <>
     <section className="vh-94" style={{ backgroundColor: "#ba919b", height: '94vh', marginTop: '0px' }}>
   <div className="container py-5 h-100">
     <div className="row d-flex justify-content-center align-items-center h-100">
@@ -108,6 +119,7 @@ const LoginPageUser = ({handleLogInStatus}) => {
                         name="email"
                         id="formEmail"
                         className="form-control form-control-lg"
+                        autoComplete='off'
                       />
                       <label className="form-label" htmlFor="formEmail">
                         Email adresa
@@ -164,10 +176,10 @@ const LoginPageUser = ({handleLogInStatus}) => {
                         className="form-control form-control-lg"
                         maxLength={6}
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value)}
+                        onChange={(e) => { setOtpCode(e.target.value); setOtpEmpty(false); }}
                         placeholder="000000"
                         autoComplete="off"
-                        style={{ letterSpacing: '0.4em', textAlign: 'center' }}
+                        style={{ letterSpacing: '0.4em', textAlign: 'center', border: otpEmpty ? '3px solid red' : '' }}
                       />
                       <label className="form-label" htmlFor="formOtp">
                         Verifikacioni kod
@@ -201,6 +213,8 @@ const LoginPageUser = ({handleLogInStatus}) => {
     </div>
   </div>
 </section>
+  {otpError && <PopUp closeMessageBox={() => setOtpError(null)} messageText={otpError} />}
+  </>
   )
 }
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import Racuni from './Racuni';
 import axios from 'axios';
@@ -33,6 +33,36 @@ const UserHome = ({accountFocus, focusedAcc, refreshTrigger}) => {
     const [isExportEmpty, setIsExportEmpty] = useState(false);
 
     const [loading, setLoading]=useState(true);
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterTip, setFilterTip] = useState('sve');
+    const cycleTip = () => setFilterTip(prev => prev === 'sve' ? 'dolazna' : prev === 'dolazna' ? 'odlazna' : 'sve');
+
+    const [isScrolled, setIsScrolled] = useState(false);
+    const transHeaderRef = useRef(null);
+    useEffect(() => {
+      const mainContainer = document.querySelector('.main-container');
+      if (!mainContainer) return;
+      const onScroll = () => {
+        if (!transHeaderRef.current) return;
+        const tabs = document.querySelector('.tabs-container');
+        const tabsBottom = tabs ? tabs.getBoundingClientRect().bottom : 0;
+        setIsScrolled(transHeaderRef.current.getBoundingClientRect().bottom <= tabsBottom + 4);
+      };
+      mainContainer.addEventListener('scroll', onScroll);
+      return () => mainContainer.removeEventListener('scroll', onScroll);
+    }, []);
+
+
+    const baseList = sortiraniNiz ?? transactions;
+    const displayTransactions = baseList
+      .filter(t => filterTip === 'sve' || t.tip_transakcije === filterTip)
+      .filter(t => {
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase();
+        return (t.naziv_primaoca || '').toLowerCase().includes(q) ||
+               (t.opis_transakcije || '').toLowerCase().includes(q);
+      });
 
     const sortDataIznos=()=>{
       let newDataOrder=[...transactions].sort((a,b)=>{
@@ -382,15 +412,32 @@ const UserHome = ({accountFocus, focusedAcc, refreshTrigger}) => {
             </div>
             </> : <>
               {tabFocused.tab2 && (<>
-              <div className="list-of-transactions-container">
-              <div className="lista-trans-icon-headline">
-                <div><PiVaultBold style={{fontSize:'1.8em', marginBottom:'3px', color:'darkBlue'}} /></div>
-                <div><h3>Lista Transakcija Za {focusedAcc == null ? <></> : focusedAcc.tip} Račun:</h3></div>
+              <div className="list-of-transactions-container" ref={transHeaderRef}>
+                <div style={{display:'flex', alignItems:'center', gap:'1.5em'}}>
+                  <div className="lista-trans-icon-headline">
+                    <div><PiVaultBold style={{fontSize:'1.8em', marginBottom:'3px', color:'darkBlue'}} /></div>
+                    <div><h3>Lista Transakcija Za {focusedAcc == null ? <></> : focusedAcc.tip} Račun:</h3></div>
+                  </div>
+                  <div className="lista-trans-br-racuna">
+                    {focusedAcc == null ? <>/</>:focusedAcc.detalji.broj_racuna}
+                  </div>
+                </div>
+                <div style={{display: isScrolled ? 'none' : 'inline-flex', position:'relative', alignItems:'center'}}>
+                  <input
+                    type="text"
+                    placeholder="Pretraga po opisu transakcije ili primaocu..."
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    style={{padding:'6px 32px 6px 18px', borderRadius:'6px', border:'1.5px solid #000', fontSize:'0.95em', height:'2.8em', outline:'none', cursor:'pointer', width:'clamp(180px, 25vw, 360px)'}}
+                  />
+                  {searchQuery && (
+                    <span
+                      onClick={() => setSearchQuery('')}
+                      style={{position:'absolute', right:'10px', cursor:'pointer', fontSize:'1em', color:'#000', lineHeight:1, userSelect:'none'}}
+                    >✕</span>
+                  )}
+                </div>
               </div>
-              <div className="lista-trans-br-racuna">
-                {focusedAcc == null ? <>/</>:focusedAcc.detalji.broj_racuna}
-              </div>
-            </div>
 
             <table>
               <thead>
@@ -398,31 +445,27 @@ const UserHome = ({accountFocus, focusedAcc, refreshTrigger}) => {
                   <th className="transactions-tbl-heading">Datum  {sortOrderDatum === 'asc' ? <IoIosArrowDown onClick={sortDataDatum}/> : <IoIosArrowUp onClick={sortDataDatum}/>}</th>
                   <th className="transactions-tbl-heading">Iznos  {sortOrderIznos === 'asc' ? <IoIosArrowDown onClick={sortDataIznos}/> : <IoIosArrowUp onClick={sortDataIznos}/>}</th>
                   <th className="transactions-tbl-heading">Opis Transakcije</th>
-                  <th className="transactions-tbl-heading">Broj Računa Primaoca</th>
+                  <th className="transactions-tbl-heading">Naziv Primaoca</th>
+                  <th className="transactions-tbl-heading" style={{cursor:'pointer'}} onClick={cycleTip}>
+                    Tip Transakcije{' '}
+                    {filterTip === 'sve' ? <span>↕</span> : filterTip === 'dolazna' ? <IoIosArrowDown style={{color:'#2e7d32'}}/> : <IoIosArrowUp style={{color:'#c62828'}}/>}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {transactions.length === 0 ? <tr style={{borderBottom : 'none'}}><td>/</td><td>/</td><td>/</td><td>/</td></tr>: <></>}
-                {transactions == null  ? <></> : (sortiraniNiz==null ? (transactions.map( (transakcija) => {
-             return (
-                <tr onClick={() => {showTransactionDetails(transakcija.id)}} className="data-row" key={transakcija.id}>
-                  <td>{transakcija.datum}</td>
-                  <td >{transakcija.iznos} <span>{focusedAcc.detalji.valuta == null ? "RSD" : focusedAcc.detalji.valuta}</span></td>
-                  <td id="opis-trans">{transakcija.opis_transakcije}</td>
-                  <td>{transakcija.broj_racuna_primaoca}</td>
-                </tr>
-             );
-            })) : (sortiraniNiz.map((trans)=>{
-              return(
-                <tr onClick={() => {showTransactionDetails(trans.id)}} className="data-row" key={trans.id}>
-                  <td>{trans.datum}</td>
-                  <td>{trans.iznos} <span>{focusedAcc.detalji.valuta == null ? "RSD" : focusedAcc.detalji.valuta}</span></td>
-                  <td>{trans.opis_transakcije}</td>
-                  <td>{trans.broj_racuna_primaoca}</td>
-                </tr>
-              );
-            })) )
-            }
+                {displayTransactions.length === 0 ? <tr style={{borderBottom:'none'}}><td>/</td><td>/</td><td>/</td><td>/</td><td>/</td></tr> : <></>}
+                {displayTransactions.map(t => (
+                  <tr onClick={() => showTransactionDetails(t.id)} className="data-row" key={t.id}
+                    style={{background: t.tip_transakcije === 'dolazna' ? 'rgba(46,125,50,0.07)' : 'rgba(198,40,40,0.06)'}}>
+                    <td>{t.datum}</td>
+                    <td><span style={{color: t.tip_transakcije === 'dolazna' ? '#2e7d32' : '#c62828', fontWeight: 700, marginRight: '6px', fontSize: '1.3em'}}>{t.tip_transakcije === 'dolazna' ? '+' : '-'}</span>{t.iznos} <span>{focusedAcc.detalji.valuta == null ? "RSD" : focusedAcc.detalji.valuta}</span></td>
+                    <td id="opis-trans">{t.opis_transakcije}</td>
+                    <td>{t.naziv_primaoca}</td>
+                    <td style={{color: t.tip_transakcije === 'dolazna' ? '#2e7d32' : '#c62828', fontWeight: 600}}>
+                      {t.tip_transakcije === 'dolazna' ? 'Dolazna' : 'Odlazna'}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
           </>
