@@ -423,7 +423,7 @@ const sredjivanjePodataka = () => {
 
       </div>
 
-      {isCreacted && <PopUp closeMessageBox={closeMessageBox} messageText={"Novi racun korisnika je uspesno kreiran!"}/>}
+      {isCreacted && <PopUp closeMessageBox={closeMessageBox} messageText={"Novi račun korisnika je uspešno kreiran!"}/>}
       {invalidData && <PopUp closeMessageBox={closeMessageBox} messageText={"Neispravno popunjen obrazac."} />}
     </>
     }

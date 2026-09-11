@@ -5,6 +5,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import PopUp from './PopUp.jsx';
 import ConfirmModal from './ConfirmModal';
+import regPhoto from '../slike/registration.jpg';
 
 const RegisterPageUser = () => {
     const navigate = useNavigate();
@@ -142,7 +143,7 @@ const RegisterPageUser = () => {
         onCancel={() => setShowResetConfirm(false)}
       />
     )}
-    <section className="h-100 bg-dark">
+    <section className="h-100" style={{ backgroundColor: "#ba919b" }}>
   <div className="container py-5 h-100">
     <div className="row d-flex justify-content-center align-items-center h-100">
       <div className="col">
@@ -150,7 +151,7 @@ const RegisterPageUser = () => {
           <div className="row g-0">
             <div className="col-xl-6 d-none d-xl-block eej">
               <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img4.webp"
+                src={regPhoto}
                 alt="Sample photo"
                 className="img-fluid"
                 style={{

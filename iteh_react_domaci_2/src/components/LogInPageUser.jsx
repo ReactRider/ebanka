@@ -4,6 +4,7 @@ import axios from 'axios';
 import {BrowserRouter, Router, Routes, Route, Link, useNavigate} from 'react-router-dom';
 import '../css/LogInPageUser.css';
 import PopUp from './PopUp';
+import userLogin from "../slike/user-login.jpg";
 
 const LoginPageUser = ({handleLogInStatus}) => {
     const navigate = useNavigate();
@@ -92,15 +93,20 @@ const LoginPageUser = ({handleLogInStatus}) => {
   <div className="container py-5 h-100">
     <div className="row d-flex justify-content-center align-items-center h-100">
       <div className="col col-xl-10">
-        <div className="card" style={{ borderRadius: "1rem" }}>
+        <div className="card login-card" style={{ borderRadius: "1rem" }}>
           <div className="row g-0">
             <div className="col-md-6 col-lg-5 d-none d-md-block">
               <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
-                alt="login form"
-                className="img-fluid"
-                style={{ borderRadius: "1rem 0 0 1rem" }}
-              />
+  src={userLogin}
+  alt="Login form"
+  style={{
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: "1rem 0 0 1rem"
+  }}
+/>
+
             </div>
             <div className="col-md-6 col-lg-7 d-flex align-items-center">
               <div className="card-body p-4 p-lg-5 text-black">

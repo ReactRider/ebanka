@@ -3,6 +3,8 @@ import {useState, useEffect } from 'react';
 import "../css/MenjKupovinaProdaja.css";
 import axios from 'axios';
 import { PulseLoader } from 'react-spinners';
+import ConfirmModal from './ConfirmModal';
+import PopUp from './PopUp';
 
 const MenjKupovinaProdaja = ({action}) => {
   const [toBuy, setToBuy] = useState(null);
@@ -14,7 +16,7 @@ const MenjKupovinaProdaja = ({action}) => {
     stanje_racuna:'',
     valuta:''
   });
-  
+
   const [selectedTekuci, setSelectedTekuci] = useState({
     broj_racuna:'',
     stanje_racuna:''
@@ -22,14 +24,17 @@ const MenjKupovinaProdaja = ({action}) => {
 
   const [iznos, setIznos] = useState("");
   const[loading, setLoading]=useState(true);
-  
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [transactionDone, setTransactionDone] = useState(false);
+
   useEffect( () => {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `http://127.0.0.1:8000/api/korisnik/bankovni-racuni`,
-      headers: { 
-        'Authorization': 'Bearer '+window.sessionStorage.getItem('user_auth_token'), 
+      headers: {
+        'Authorization': 'Bearer '+window.sessionStorage.getItem('user_auth_token'),
       },
     };
 
@@ -57,7 +62,7 @@ const MenjKupovinaProdaja = ({action}) => {
       setToBuy(true);
     else if(action == "sell")
       setToBuy(false);
-  
+
   }, []);
 
   const handleSaRacuna = (e) => {
@@ -82,14 +87,14 @@ const MenjKupovinaProdaja = ({action}) => {
       let newData = selectedTekuci;
       newData.broj_racuna = e.target.value.split('/')[0];
       newData.stanje_racuna = e.target.value.split('/')[1];
-      
+
       setSelectedTekuci(newData);
     } else if(e.target.name === "combo-na-racun-devizni") {
       let newData = selectedDevizni;
       newData.broj_racuna = e.target.value.split('/')[0];
       newData.stanje_racuna = e.target.value.split('/')[1];
       newData.valuta = e.target.value.split('/')[2];
-      
+
       setSelectedDevizni(newData);
     }
   }
@@ -99,30 +104,51 @@ const MenjKupovinaProdaja = ({action}) => {
   }
 
   const handlePotvrdiMenjacnica = () => {
-    
+
     if(!toBuy) {
       if(selectedDevizni.broj_racuna === '' || selectedTekuci.broj_racuna === ''){
-        alert("Izaberite željene račune!");
+        setPopupMessage("Izaberite željene račune!");
         return;
       }
       if(iznos === '') {
-        alert("Unesite željeni iznos!");
+        setPopupMessage("Unesite željeni iznos!");
         return;
       }
 
       if(Number(iznos) <= 0) {
-        alert("Iznos mora biti pozitivan broj!");
+        setPopupMessage("Iznos mora biti pozitivan broj!");
         return;
       }
       if(Number(iznos) > Number(selectedDevizni.stanje_racuna)) {
-        alert("Nemate dovoljno sredstava na deviznom racunu!");
+        setPopupMessage("Nemate dovoljno sredstava na deviznom racunu!");
         return;
       }
 
-      if(!window.confirm("Da li ste sigurni?")) {
+      setShowConfirm(true);
+      return;
+    } else if(toBuy) {
+      if(selectedDevizni.broj_racuna === '' || selectedTekuci.broj_racuna === ''){
+        setPopupMessage("Izaberite željene račune!");
         return;
-      }  
+      }
+      if(iznos === '') {
+        setPopupMessage("Unesite željeni iznos!");
+        return;
+      }
 
+      if(Number(iznos) <= 0) {
+        setPopupMessage("Iznos mora biti pozitivan broj!");
+        return;
+      }
+
+      setShowConfirm(true);
+    }
+  }
+
+  const izvrsiTransakciju = () => {
+    setShowConfirm(false);
+
+    if(!toBuy) {
       let config = {
         method: 'get',
         maxBodyLength: Infinity,
@@ -137,7 +163,7 @@ const MenjKupovinaProdaja = ({action}) => {
         let temp_stanje = selectedTekuci.stanje_racuna;
         let konvertovani_iznos = Number(iznos) * res.data.exchange_sell;
         temp_stanje = Number(temp_stanje) + Number(konvertovani_iznos);
-        
+
         let newDataTekuci = selectedTekuci;
         newDataTekuci.stanje_racuna = temp_stanje;
         setSelectedTekuci(newDataTekuci);
@@ -171,31 +197,13 @@ const MenjKupovinaProdaja = ({action}) => {
 
       axios.request(config_3)
       .then( (res) => {
-        console.log("Uspesno smanjeno stanje deviznog!");
+        console.log("Uspešno smanjeno stanje deviznog!");
       })
 
-      alert("Uspešno izvršena transakcija! Devizni => Tekuci");
-      window.location.reload();
+      setPopupMessage("Uspešno izvršena transakcija! Devizni => Tekući");
+      setTransactionDone(true);
     })
   } else if(toBuy) {
-
-    if(selectedDevizni.broj_racuna === '' || selectedTekuci.broj_racuna === ''){
-      alert("Izaberite željene račune!");
-      return;
-    }
-    if(iznos === '') {
-      alert("Unesite željeni iznos!");
-      return;
-    }
-
-    if(Number(iznos) <= 0) {
-      alert("Iznos mora biti pozitivan broj!");
-      return;
-    }
-
-    if(!window.confirm("Da li ste sigurni?")) {
-      return;
-    }
 
     let config = {
       method: 'get',
@@ -210,14 +218,14 @@ const MenjKupovinaProdaja = ({action}) => {
     .then( (res) => {
       let temp_stanje = selectedDevizni.stanje_racuna;
       temp_stanje = Number(temp_stanje) + Number(iznos);
-      
+
       let newDataDevizni = selectedDevizni;
       newDataDevizni.stanje_racuna = temp_stanje;
       setSelectedDevizni(newDataDevizni);
 
       let newDataTekuci = selectedTekuci;
       if(Number(iznos) * res.data.exchange_buy > Number(selectedTekuci.stanje_racuna)) {
-        alert("Nemate dovoljno sredstava na tekućem racunu!");
+        setPopupMessage("Nemate dovoljno sredstava na tekućem racunu!");
         return;
       }
 
@@ -249,32 +257,39 @@ const MenjKupovinaProdaja = ({action}) => {
 
     axios.request(config_3)
     .then( (res) => {
-      console.log("Uspesno povecano stanje deviznog!");
+      console.log("Uspešno povećano stanje deviznog!");
     })
 
-    alert("Uspešno izvršena transakcija! Tekuci => Devizni");
-    window.location.reload();
+    setPopupMessage("Uspešno izvršena transakcija! Tekuci => Devizni");
+    setTransactionDone(true);
   })
   }
 }
 
+  const closePopup = () => {
+    setPopupMessage('');
+    if(transactionDone) {
+      window.location.reload();
+    }
+  }
+
   return (
-    <>  
+    <>
       {toBuy && (
          <div className="buy main-container-action-menjacnica">
 
          <div className="sa-racuna-container">
-           
+
            <div><span style={{fontSize: '1.4em', fontWeight: '400'}}>Sa računa:</span></div>
-           
+
            <div>
             {loading===true ? <>
                <div >
                 <PulseLoader
-                  color="#9A616D"     
-                  size={35}           
-                  margin={8}          
-                  speedMultiplier={0.5} 
+                  color="#9A616D"
+                  size={35}
+                  margin={8}
+                  speedMultiplier={0.5}
                 />
               </div>
             </> : <>
@@ -283,7 +298,7 @@ const MenjKupovinaProdaja = ({action}) => {
              <select defaultValue="" onChange={(e)=>{handleSaRacuna(e)}} name="combo-sa-racuna-tekuci" className="combo-menjacnica">
                  <option value="" disabled>Izaberite račun</option>
                {tekuciRacuni == null ? <></> :
-                 
+
                  tekuciRacuni.map( (racun) => (
                    <option style={{textTransform: 'capitalize'}} key={racun.id} value={`${racun.detalji.broj_racuna}/${racun.detalji.stanje_racuna}`}>
                     {racun.banka.naziv} / {racun.detalji.broj_racuna} / {racun.detalji.stanje_racuna}RSD
@@ -293,23 +308,23 @@ const MenjKupovinaProdaja = ({action}) => {
              </select>
              }
             </>}
-             
+
            </div>
 
          </div>
 
          <div className="na-racun-container">
-           
+
            <div><span style={{fontSize: '1.4em', fontWeight: '400'}}>Na račun:</span></div>
-           
+
            <div>
             {loading===true ? <>
               <div >
                 <PulseLoader
-                  color="#9A616D"     
-                  size={35}           
-                  margin={8}          
-                  speedMultiplier={0.5} 
+                  color="#9A616D"
+                  size={35}
+                  margin={8}
+                  speedMultiplier={0.5}
                 />
               </div>
             </> : <>
@@ -318,7 +333,7 @@ const MenjKupovinaProdaja = ({action}) => {
              <select defaultValue="" onChange={(e)=>{handleNaRacun(e)}} name="combo-na-racun-devizni" className="combo-menjacnica">
                  <option value="" disabled>Izaberite račun</option>
                {devizniRacuni == null ? <></> :
-                 
+
                  devizniRacuni.map( (racun) => (
                    <option style={{textTransform: 'capitalize'}} key={racun.id} value={`${racun.detalji.broj_racuna}/${racun.detalji.stanje_racuna}/${racun.detalji.valuta}`}>
                      {racun.banka.naziv} / {racun.detalji.broj_racuna} / {racun.detalji.stanje_racuna}{racun.detalji.valuta}
@@ -328,7 +343,7 @@ const MenjKupovinaProdaja = ({action}) => {
              </select>
              }
             </>}
-             
+
            </div>
 
          </div>
@@ -346,7 +361,7 @@ const MenjKupovinaProdaja = ({action}) => {
 
            <div>
              <button onClick={()=>{handlePotvrdiMenjacnica()}} className="btn-potvrdi-menjacnica">Potvrdi</button>
-             
+
            </div>
          </div>
        </div>
@@ -357,17 +372,17 @@ const MenjKupovinaProdaja = ({action}) => {
         <div className="sell main-container-action-menjacnica">
 
           <div className="sa-racuna-container">
-            
+
             <div><span style={{fontSize: '1.4em', fontWeight: '400'}}>Sa računa:</span></div>
-            
+
             <div>
               {loading===true ? <>
                 <div >
                 <PulseLoader
-                  color="#9A616D"     
-                  size={35}           
-                  margin={8}          
-                  speedMultiplier={0.5} 
+                  color="#9A616D"
+                  size={35}
+                  margin={8}
+                  speedMultiplier={0.5}
                 />
               </div>
               </> : <>
@@ -376,7 +391,7 @@ const MenjKupovinaProdaja = ({action}) => {
               <select defaultValue="" onChange={(e)=>{handleSaRacuna(e)}} name="combo-sa-racuna-devizni" className="combo-menjacnica">
                   <option value="" disabled>Izaberite račun</option>
                 {devizniRacuni == null ? <></> :
-                  
+
                   devizniRacuni.map( (racun) => (
                     <option style={{textTransform: 'capitalize'}} key={racun.id} value={`${racun.detalji.broj_racuna}/${racun.detalji.stanje_racuna}/${racun.detalji.valuta}`}>
                         {racun.detalji.broj_racuna} / {racun.detalji.stanje_racuna}{racun.detalji.valuta} /  {racun.banka.naziv}
@@ -386,23 +401,23 @@ const MenjKupovinaProdaja = ({action}) => {
               </select>
               }
               </>}
-              
+
             </div>
 
           </div>
 
           <div className="na-racun-container">
-            
+
             <div><span style={{fontSize: '1.4em', fontWeight: '400'}}>Na račun:</span></div>
-            
+
             <div>
               {loading===true ? <>
                 <div >
                 <PulseLoader
-                  color="#9A616D"     
-                  size={35}           
-                  margin={8}          
-                  speedMultiplier={0.5} 
+                  color="#9A616D"
+                  size={35}
+                  margin={8}
+                  speedMultiplier={0.5}
                 />
               </div>
               </> : <>
@@ -411,17 +426,17 @@ const MenjKupovinaProdaja = ({action}) => {
               <select defaultValue="" onChange={(e)=>{handleNaRacun(e)}} name="combo-na-racun-tekuci" className="combo-menjacnica">
                   <option value="" disabled>Izaberite račun</option>
                 {tekuciRacuni == null ? <></> :
-                  
+
                   tekuciRacuni.map( (racun) => (
                     <option style={{textTransform: 'capitalize'}} key={racun.id} value={`${racun.detalji.broj_racuna}/${racun.detalji.stanje_racuna}`}>
-                       {racun.banka.naziv} / {racun.detalji.broj_racuna} / {racun.detalji.stanje_racuna}RSD 
+                       {racun.banka.naziv} / {racun.detalji.broj_racuna} / {racun.detalji.stanje_racuna}RSD
                     </option>
                   ))
                 }
               </select>
               }
               </>}
-              
+
             </div>
 
           </div>
@@ -439,11 +454,23 @@ const MenjKupovinaProdaja = ({action}) => {
 
             <div>
               <button onClick={()=>{handlePotvrdiMenjacnica()}} className="btn-potvrdi-menjacnica">Potvrdi</button>
-              
+
             </div>
           </div>
         </div>
       )}
+
+      {showConfirm && (
+        <ConfirmModal
+          title="Potvrda transakcije"
+          message="Da li ste sigurni da želite da izvršite ovu transakciju?"
+          confirmText="Potvrdi"
+          cancelText="Odustani"
+          onConfirm={izvrsiTransakciju}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
+      {popupMessage && <PopUp closeMessageBox={closePopup} messageText={popupMessage} />}
 
     </>
   )

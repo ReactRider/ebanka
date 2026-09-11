@@ -1,3 +1,14 @@
 .user-login-link:hover {
     text-decoration: underline !important;
 }
+
+/* Enlarge the login card ~15% in height.
+   Bootstrap's p-* utilities use !important, so we need it here too. */
+.login-card .card-body {
+    padding-top: 6rem !important;
+    padding-bottom: 6rem !important;
+}
+
+.login-card .row.g-0 {
+    min-height: 34rem;
+}
